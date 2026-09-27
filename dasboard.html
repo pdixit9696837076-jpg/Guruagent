@@ -463,7 +463,7 @@ textarea:focus { outline: none; border-color: var(--ac); box-shadow: 0 0 0 3px r
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <style>
 @media (max-width: 640px) {
-  #app { display: block; min-height: 100dvh; padding-bottom: calc(64px + env(safe-area-inset-bottom)); }
+  #app { display: block; min-height: 100dvh; padding-bottom: calc(72px + env(safe-area-inset-bottom)); }
   .sidebar {
     position: fixed;
     inset: auto 0 0;
@@ -503,6 +503,19 @@ textarea:focus { outline: none; border-color: var(--ac); box-shadow: 0 0 0 3px r
     text-align: center;
   }
   .sidebar .nav-icon { font-size: 15px; }
+  .assistant-launcher {
+    right: 14px;
+    bottom: calc(78px + env(safe-area-inset-bottom));
+    z-index: 29;
+    width: 46px;
+    height: 46px;
+  }
+  .assistant-pop {
+    right: 12px;
+    bottom: calc(78px + env(safe-area-inset-bottom));
+    width: min(390px, calc(100vw - 24px));
+    height: min(540px, calc(100dvh - 100px - env(safe-area-inset-bottom)));
+  }
   .mn { width: 100%; min-width: 0; margin: 0; }
   .hd { position: sticky; top: 0; z-index: 20; padding: 10px 12px; gap: 8px; }
   .top-title { min-width: 0; }
