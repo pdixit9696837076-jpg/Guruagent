@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>GuruAgent - Practice Quiz</title>
+
+    <link rel="stylesheet" href="quiz.css">
+    <link rel="stylesheet" href="../guru-theme.css">
+</head>
+
+<body>
+
+    <!-- ================= QUIZ PAGE ================= -->
+
+    <main class="quiz-page">
+
+        <!-- Quiz Header -->
+        <header class="quiz-header">
+
+            <div class="quiz-header-left">
+
+                <a href="../practice.html" class="back-btn">
+                    ←
+                </a>
+
+                <div>
+                    <p class="quiz-label">PRACTICE SESSION</p>
+                    <h1 id="subject">Practice Quiz</h1>
+                </div>
+
+            </div>
+
+            <div class="quiz-header-right">
+
+                <span id="difficulty" class="difficulty">
+                    Mixed
+                </span>
+
+            </div>
+
+        </header>
+
+
+        <!-- ================= PROGRESS ================= -->
+
+        <section class="progress-section">
+
+            <div class="progress-top">
+
+                <span>
+                    Question <strong id="questionNumber">1</strong> of 5
+                </span>
+
+                <span id="progressPercent">
+                    20%
+                </span>
+
+            </div>
+
+            <div class="progress-bar">
+
+                <div
+                    id="questionProgressFill"
+                    class="progress-fill">
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= QUIZ CONTAINER ================= -->
+
+        <section class="quiz-container">
+
+            <!-- Question Number -->
+            <div class="question-number">
+                Question <span id="qNumber">1</span>
+            </div>
+
+
+            <!-- Question -->
+            <h2 id="question" aria-live="polite">
+                Loading question...
+            </h2>
+
+
+            <!-- Options -->
+            <div id="options" class="options-container">
+                <!-- Options will be added by JavaScript -->
+            </div>
+
+
+            <!-- Hint -->
+            <div class="hint-section">
+
+                <button
+                    id="hintButton"
+                    class="hint-button"
+                    type="button">
+
+                    💡 Show Hint
+
+                </button>
+
+                <p id="hint" class="hint-text"></p>
+
+            </div>
+
+
+        </section>
+
+
+        <!-- ================= ANSWER FEEDBACK ================= -->
+
+        <div
+            id="answerFeedback"
+            class="answer-feedback"
+            role="status"
+            aria-live="polite">
+        </div>
+
+
+        <!-- ================= RESULT ================= -->
+
+        <section
+            id="result"
+            class="result-section"
+            style="display: none;">
+
+            <div class="result-icon">
+                🎉
+            </div>
+
+            <p class="result-label">
+                PRACTICE COMPLETE
+            </p>
+
+            <h2>
+                Great Job!
+            </h2>
+
+            <p class="result-description">
+                Here's how you performed in this practice session.
+            </p>
+
+
+            <!-- Score -->
+            <div class="score-card">
+
+                <div class="score-main">
+
+                    <span id="score">
+                        0/5
+                    </span>
+
+                    <small>
+                        Score
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <!-- Result Stats -->
+            <div class="result-stats">
+
+                <div class="result-stat">
+
+                    <span class="stat-icon">
+                        ✓
+                    </span>
+
+                    <div>
+                        <strong id="correctCount">
+                            0
+                        </strong>
+
+                        <small>
+                            Correct
+                        </small>
+                    </div>
+
+                </div>
+
+
+                <div class="result-stat">
+
+                    <span class="stat-icon wrong-icon">
+                        ✕
+                    </span>
+
+                    <div>
+                        <strong id="wrongCount">
+                            0
+                        </strong>
+
+                        <small>
+                            Wrong
+                        </small>
+                    </div>
+
+                </div>
+
+
+                <div class="result-stat">
+
+                    <span class="stat-icon">
+                        %
+                    </span>
+
+                    <div>
+                        <strong id="accuracy">
+                            0%
+                        </strong>
+
+                        <small>
+                            Accuracy
+                        </small>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="resultSummary"
+                class="result-summary">
+            </div>
+
+
+            <!-- Retry -->
+            <button
+                id="retryButton"
+                class="retry-button"
+                type="button">
+
+                🔄 Try Again
+
+            </button>
+
+
+            <!-- Back to Practice -->
+            <a
+                href="../practice.html"
+                class="back-practice">
+
+                ← Back to Practice
+
+            </a>
+
+        </section>
+
+    </main>
+
+
+    <!-- JavaScript -->
+    <script src="quiz.js"></script>
+
+</body>
+</html>

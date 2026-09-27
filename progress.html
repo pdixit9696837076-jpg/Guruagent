@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>GuruAgent - Progress</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="progress.css">
+    <link rel="stylesheet" href="study-ui.css">
+    <link rel="stylesheet" href="guru-theme.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+
+<body>
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+            <button class="brand-mark sidebar-toggle" type="button" aria-label="Expand navigation" aria-expanded="false" title="Expand or collapse navigation"><img src="GuruAgentLogo.jpg?v=202609252351" alt=""></button>
+            <div class="brand-copy">
+                <strong>GuruAgent</strong>
+                <span>Chanakya-Marg</span>
+            </div>
+        </div>
+
+
+        <nav class="nav" aria-label="Primary navigation">
+
+            <a class="nav-item" href="dashboard.html"><i class="bi bi-house-door nav-icon"></i><span>Dashboard</span></a>
+
+            <a class="nav-item" href="study.html"><i class="bi bi-journal-check nav-icon"></i><span>Study Plan</span></a>
+
+            <a class="nav-item" href="practice.html"><i class="bi bi-check2-square nav-icon"></i><span>Practice</span></a>
+
+            <a class="nav-item active" href="progress.html"><i class="bi bi-graph-up-arrow nav-icon"></i><span>Progress</span></a>
+            <a class="nav-item" href="profile.html"><i class="bi bi-person nav-icon"></i><span>Profile</span></a>
+            <a class="nav-item" href="profile.html#security"><i class="bi bi-gear nav-icon"></i><span>Settings</span></a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="agent-status"><span class="status-dot"></span><span>Agent Active</span></div>
+            <a class="mini-user" href="profile.html"><span class="avatar">P</span><span><strong>Profile</strong><small>Open account</small></span></a>
+        </div>
+
+    </aside>
+
+
+
+    <!-- ================= MAIN CONTENT ================= -->
+
+    <main class="main">
+
+
+        <!-- ================= HEADER ================= -->
+
+        <header class="top-header">
+
+            <div>
+
+                <h1>Progress</h1>
+
+                <p>
+                    Track your learning growth and performance over time.
+                </p>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- ================= OVERVIEW ================= -->
+
+        <section class="overview">
+
+            <h2>Overall Progress</h2>
+
+
+            <div class="overview-cards">
+
+
+                <!-- Overall Score -->
+
+                <div class="card">
+
+                    <h3>Overall Score</h3>
+
+                    <strong id="overallScore">0%</strong>
+
+                    <p>Good Progress</p>
+
+                </div>
+
+
+                <!-- Questions -->
+
+                <div class="card">
+
+                    <h3>Questions Practiced</h3>
+
+                    <strong id="questionsPracticed">0</strong>
+
+                    <p>Questions</p>
+
+                </div>
+
+
+                <!-- Accuracy -->
+
+                <div class="card">
+
+                    <h3>Average Accuracy</h3>
+
+                    <strong id="averageAccuracy">0%</strong>
+
+                    <p>Across all practice</p>
+
+                </div>
+
+
+                <!-- Streak -->
+
+                <div class="card">
+
+                    <h3>Current Streak</h3>
+
+                    <strong id="currentStreak">0 Days 🔥</strong>
+
+                    <p>Keep going!</p>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================= PERFORMANCE OVERVIEW ================= -->
+
+        <section class="performance-section">
+
+
+            <!-- Performance Chart -->
+
+            <div class="performance-chart">
+
+                <h2>Performance Overview</h2>
+
+                <p class="section-subtitle">
+                    Your accuracy over the past few weeks
+                </p>
+
+
+                <div class="chart">
+
+                    <div class="chart-y-axis">
+
+                        <span>100%</span>
+                        <span>80%</span>
+                        <span>60%</span>
+                        <span>40%</span>
+                        <span>20%</span>
+                        <span>0%</span>
+
+                    </div>
+
+
+                    <div class="chart-area">
+
+                        <div class="grid-line line-100"></div>
+                        <div class="grid-line line-80"></div>
+                        <div class="grid-line line-60"></div>
+                        <div class="grid-line line-40"></div>
+                        <div class="grid-line line-20"></div>
+
+
+                        <div class="chart-bars">
+
+                            <div class="bar-container">
+
+                                <div class="bar" style="height: 0%;"></div>
+
+                                <span>4 weeks ago</span>
+
+                            </div>
+
+
+                            <div class="bar-container">
+
+                                <div class="bar" style="height: 0%;"></div>
+
+                                <span>3 weeks ago</span>
+
+                            </div>
+
+
+                            <div class="bar-container">
+
+                                <div class="bar" style="height: 0%;"></div>
+
+                                <span>2 weeks ago</span>
+
+                            </div>
+
+
+                            <div class="bar-container">
+
+                                <div class="bar" style="height: 0%;"></div>
+
+                                <span>This week</span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- Subject Performance -->
+
+            <div class="subject-performance">
+
+                <h2>Subject Performance</h2>
+
+                <p class="section-subtitle">
+                    Accuracy by subject
+                </p>
+
+
+                <div id="subjectPerformanceList">
+                    <p class="section-subtitle">Complete a practice session to see subject accuracy.</p>
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- ================= STRONG + WEAK AREAS ================= -->
+
+        <section class="areas-section">
+
+
+            <!-- Strong Areas -->
+
+            <div class="areas-card">
+
+                <h2>💪 Strong Areas</h2>
+
+                <p class="section-subtitle">
+                    Topics where you are performing well
+                </p>
+
+
+                <div id="strongTopicsList"><p class="section-subtitle">Topic strengths appear after practice.</p></div>
+
+            </div>
+
+
+
+            <!-- Improvement Areas -->
+
+            <div class="areas-card">
+
+                <h2>🎯 Areas to Improve</h2>
+
+                <p class="section-subtitle">
+                    Topics that need more practice
+                </p>
+
+
+                <div id="weakTopicsList"><p class="section-subtitle">Topics to improve appear after practice.</p></div>
+
+            </div>
+
+
+        </section>
+
+
+
+        <section class="recent-progress" id="learningPlanProgress" hidden>
+            <div class="plan-progress-heading">
+                <div>
+                    <span class="plan-progress-kicker">YOUR STUDY JOURNEY</span>
+                    <h2>Exam Plan Progress</h2>
+                    <p class="section-subtitle" id="planProgressSummary"></p>
+                </div>
+                <div class="plan-progress-actions">
+                    <a class="plan-action-secondary" href="study.html">View study plan</a>
+                    <a class="plan-action-primary" id="planStartPractice" href="practice.html">
+                        <i class="bi bi-play-fill" aria-hidden="true"></i>
+                        <span id="planStartPracticeLabel">Start next practice</span>
+                    </a>
+                </div>
+            </div>
+            <div class="plan-progress-overview">
+                <div class="plan-progress-stats">
+                    <strong id="planProgressCount">0 / 0</strong>
+                    <span>study sessions complete</span>
+                </div>
+                <span class="plan-progress-exam-date" id="planExamDate"></span>
+                <div class="plan-progress-track" role="progressbar" aria-label="Exam plan completion" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                    <div class="plan-progress-fill" id="planProgressBar"></div>
+                </div>
+            </div>
+            <div class="progress-list" id="learningPlanProgressTopics"></div>
+        </section>
+
+        <!-- ================= RECENT PROGRESS ================= -->
+
+        <section class="recent-progress">
+
+            <h2>Recent Progress</h2>
+
+            <p class="section-subtitle">
+                Your recent learning activity
+            </p>
+
+
+            <div class="progress-list" id="recentProgressList"></div>
+
+        </section>
+
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-client.js"></script>
+    <script src="learning-state.js"></script>
+    <script src="progress.js"></script>
+    <script src="sidebar-profile.js"></script>
+
+</body>
+
+</html>

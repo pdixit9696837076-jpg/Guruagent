@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#11162d" />
+  <title>Chanakya-Marg | Adaptive Study Plan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="study.css" />
+  <link rel="stylesheet" href="study-ui.css" />
+  <link rel="stylesheet" href="guru-theme.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body>
+  <div class="mobile-overlay" id="mobileOverlay"></div>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <button class="brand-mark sidebar-toggle" type="button" aria-label="Expand navigation" aria-expanded="false" title="Expand or collapse navigation"><img src="GuruAgentLogo.jpg?v=202609252351" alt=""></button>
+      <div class="brand-copy">
+        <strong>GuruAgent</strong>
+        <span>Chanakya-Marg</span>
+      </div>
+    </div>
+
+    <nav class="nav" aria-label="Primary navigation">
+      <a class="nav-item" href="dashboard.html"><i class="bi bi-house-door nav-icon"></i><span>Dashboard</span></a>
+      <button class="nav-item active" data-target="todaySection"><i class="bi bi-journal-check nav-icon"></i><span>Study Plan</span></button>
+      <a class="nav-item" href="practice.html"><i class="bi bi-check2-square nav-icon"></i><span>Practice</span></a>
+      <a class="nav-item" href="progress.html"><i class="bi bi-graph-up-arrow nav-icon"></i><span>Progress</span></a>
+      <a class="nav-item" href="profile.html"><i class="bi bi-person nav-icon"></i><span>Profile</span></a>
+      <a class="nav-item" href="profile.html#security"><i class="bi bi-gear nav-icon"></i><span>Settings</span></a>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <div class="agent-status"><span class="status-dot"></span><span>Agent Active</span></div>
+      <a class="mini-user" href="profile.html">
+        <div class="avatar">P</div>
+        <div>
+          <strong>Prince</strong>
+          <span>BCA • II Year</span>
+        </div>
+      </a>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar" id="dashboardSection">
+      <button class="mobile-menu" id="mobileMenuBtn" aria-label="Open menu">☰</button>
+
+      <div class="header-copy">
+        <div class="eyebrow">CHANAKYA-MARG • ADAPTIVE MENTOR</div>
+        <h1>Today's Adaptive Study Plan</h1>
+        <p id="headerSubtitle">Your plan is built around the day, your subjects and your recent progress.</p>
+      </div>
+
+      <div class="header-actions">
+        <div class="exam-countdown">
+          <div class="exam-countdown-title"><span class="watch-icon">◷</span><span>Exam Countdown</span></div>
+          <strong id="countdownValue">15 Days Remaining</strong>
+        </div>
+        <div class="today-pill">
+          <span class="today-dot"></span>
+          <span id="todayLabel">Today</span>
+        </div>
+      </div>
+    </header>
+
+    <section class="notice-bar">
+      <div class="notice-copy">
+        <strong id="noticeTitle">Today's focus</strong>
+        <span id="noticeText">Hover over today's card to preview the exact time-wise plan. The weekly test opens on Sunday.</span>
+      </div>
+      <button class="notice-clear" id="clearSubjectFilter" type="button">All Subjects</button>
+    </section>
+
+    <section class="panel exam-plan-panel" id="examPlanPanel" hidden>
+      <div class="section-header compact">
+        <div>
+          <span class="section-kicker">YOUR EXAM PLAN</span>
+          <h2 id="examPlanTitle">Focused study plan</h2>
+          <p class="section-subtitle" id="examPlanSummary"></p>
+        </div>
+        <span class="pill-soft" id="examPlanCountdown"></span>
+      </div>
+      <div class="exam-plan-topics" id="examPlanTopics"></div>
+    </section>
+
+    <section class="content-grid" id="todaySection">
+      <div class="primary-column">
+        <section class="panel today-panel">
+          <div class="section-header">
+            <div>
+              <span class="section-kicker">TODAY • <span id="dayKicker">MONDAY</span></span>
+              <h2 id="dayHeading">Monday's Complete Plan</h2>
+            </div>
+            <div class="day-mini-meta">
+              <span class="pill-soft" id="planLoad">4 sessions</span>
+              <span class="pill-soft" id="planMinutes">150 min</span>
+            </div>
+          </div>
+
+          <article class="day-focus-card" id="dayFocusCard">
+            <div class="day-card-backdrop"></div>
+            <div class="day-card-content">
+              <div class="day-card-top">
+                <div>
+                  <div class="big-day" id="bigDay">Monday</div>
+                  <div class="big-day-sub" id="bigDaySub">Build strong concepts today — one focused block at a time.</div>
+                </div>
+                <div class="focus-badge"><span class="status-dot"></span><span id="focusBadgeText">Focus Day</span></div>
+              </div>
+
+              <div class="hover-hint">Hover to reveal today's time-wise plan <span>↘</span></div>
+
+              <div class="day-plan-reveal" id="dayPlanReveal">
+                <div class="plan-list" id="planList"></div>
+              </div>
+
+              <div class="day-card-actions">
+                <button class="primary-button" id="practiceFromDayBtn" type="button">Go to Practice</button>
+                <button class="secondary-button" id="markDayBtn" type="button">Mark Day Complete</button>
+              </div>
+            </div>
+          </article>
+
+          <section class="day-notes">
+            <div class="day-note-card">
+              <div class="note-icon purple">AI</div>
+              <div>
+                <strong>Agent note</strong>
+                <p id="agentNote">Keep the first block light and use the final block for recall practice.</p>
+              </div>
+            </div>
+            <div class="day-note-card">
+              <div class="note-icon green">✓</div>
+              <div>
+                <strong>Today's target</strong>
+                <p id="todayTarget">Complete at least 70% of planned minutes.</p>
+              </div>
+            </div>
+          </section>
+        </section>
+
+        <section class="panel subject-filter-panel" id="subjectsSection">
+          <div class="section-header compact">
+            <div>
+              <span class="section-kicker">SUBJECTS</span>
+              <h2>Choose a subject to see today's plan</h2>
+            </div>
+            <span class="subject-count" id="subjectCount">5 subjects</span>
+          </div>
+          <div class="subject-grid" id="subjectGrid"></div>
+        </section>
+
+        <section class="panel weekend-card-panel" id="weekendTestSection">
+          <article class="weekend-focus-card" id="weekendFocusCard">
+            <div class="weekend-card-backdrop"></div>
+            <div class="weekend-focus-content">
+              <div class="weekend-head">
+                <div>
+                  <span class="section-kicker light-kicker">SUNDAY TEST MODE</span>
+                  <h2>Weekly Mock Test</h2>
+                  <p>One focused Sunday test to measure what stayed with you across the full week's learning.</p>
+                </div>
+                <div class="focus-badge"><span class="watch-icon small">◷</span> 24-hour access</div>
+              </div>
+
+              <div class="weekend-test-grid">
+                <article class="weekend-test-item" data-weekend-item="Sunday">
+                  <div class="weekend-test-icon sun">S</div>
+                  <div class="weekend-test-body">
+                    <div class="weekend-test-day">SUNDAY • FULL-WEEK REVIEW</div>
+                    <h3>Mixed subject assessment</h3>
+                    <p>DBMS, OOP, Operating Systems, JavaScript and React in one balanced paper.</p>
+                    <div class="weekend-test-meta">
+                      <span class="test-stat"><strong>25</strong> questions</span><span class="test-stat"><strong>45</strong> min max</span><span id="sunCountdown">Waiting for Sunday</span>
+                    </div>
+                  </div>
+                  <button class="weekend-test-btn" data-weekend-test="Sunday" type="button">Locked</button>
+                </article>
+              </div>
+
+              <div class="weekend-footnote">
+                <span>◉</span> Available only on Sunday, for the full 24-hour day. Start when you are ready and finish within 45 minutes.
+              </div>
+            </div>
+          </article>
+        </section>
+
+        <!-- CHEKRO / PRACTICE SECTION -->
+        <section class="panel practice-panel" id="practiceSection">
+          <div class="section-header compact">
+            <div>
+              <span class="section-kicker">PRACTICE</span>
+              <h2>Today's practice queue</h2>
+              <p class="section-subtitle">Tasks from the selected day appear here so the student can act, not just read the plan.</p>
+            </div>
+            <span class="pill-soft" id="practiceCount">0 tasks</span>
+          </div>
+          <div class="practice-list" id="practiceList"></div>
+          <div class="week-plan-wrap">
+            <div class="week-plan-heading">
+              <div>
+                <span class="section-kicker">WEEK VIEW</span>
+                <h3 id="weekPlanTitle">One-week study plan</h3>
+              </div>
+              <span class="pill-soft" id="weekPlanLabel">Today</span>
+            </div>
+            <div class="week-day-tabs" id="weekDayTabs"></div>
+            <div class="practice-list" id="weekPlanList"></div>
+          </div>
+        </section>
+
+        <section class="panel progress-panel" id="progressSection">
+          <div class="section-header compact">
+            <div>
+              <span class="section-kicker">PROGRESS</span>
+              <h2 id="progressHeading">Weekly learning snapshot</h2>
+            </div>
+            <span class="pill-soft" id="progressPercent">0%</span>
+          </div>
+          <div class="progress-grid">
+            <div class="progress-stat"><span>Planned</span><strong id="progressPlanned">0 hrs</strong></div>
+            <div class="progress-stat"><span>Completed</span><strong id="progressCompleted">0 hrs</strong></div>
+            <div class="progress-stat"><span>Sessions</span><strong id="progressSessions">0 / 0</strong></div>
+          </div>
+          <div class="big-progress"><span id="progressBar"></span></div>
+          <p class="progress-note" id="progressNote">Your plan will adapt after the next review.</p>
+        </section>
+
+      </div>
+
+      <!-- AI MENTOR SECTION -->
+      <aside class="secondary-column">
+        <section class="side-card decision-card">
+          <div class="side-card-header">
+            <div>
+              <span class="section-kicker">AI MENTOR</span>
+              <h3>GuruAgent Decision</h3>
+            </div>
+            <span class="agent-badge">Active</span>
+          </div>
+          <div class="decision-flow">
+            <div class="decision-step"><span class="decision-label">Observed</span><p id="decisionObserved">No changes yet. The agent is observing today's performance.</p></div>
+            <div class="decision-arrow">↓</div>
+            <div class="decision-step"><span class="decision-label">Decision</span><p id="decisionText">Keep today's plan balanced across concept, practice and recall.</p></div>
+            <div class="decision-arrow">↓</div>
+            <div class="decision-step"><span class="decision-label">Action Taken</span><p id="decisionAction">The selected-day schedule is ready with time-wise practice blocks.</p></div>
+            <div class="decision-arrow">↓</div>
+            <div class="decision-step"><span class="decision-label">Next Review</span><p id="decisionReview">After today's final session</p></div>
+          </div>
+          <button class="full-width-button" id="viewDecisionBtn" type="button">View Decision Details</button>
+        </section>
+
+        <section class="side-card readiness-card">
+          <div class="side-card-header"><div><span class="section-kicker">READINESS</span><h3>Today's readiness</h3></div><span class="readiness-value" id="readinessValue">68%</span></div>
+          <div class="readiness-ring" id="readinessRing"><span id="readinessRingText">68</span><small>/100</small></div>
+          <p id="readinessText">Good foundation. The agent is prioritizing active practice over extra theory.</p>
+        </section>
+      </aside>
+    </section>
+  </main>
+
+  <div class="quick-actions" id="quickActions">
+    <div class="quick-copy">
+      <span class="quick-dot"></span>
+      <div><strong>Quick Actions</strong><span id="quickStatus">Your next useful action is ready.</span></div>
+    </div>
+    <div class="quick-buttons">
+      <button class="quick-btn primary" id="quickStartBtn" type="button">Start Next Session</button>
+      <button class="quick-btn" id="quickPracticeBtn" type="button">Open Practice</button>
+      <button class="quick-btn" id="quickAdaptBtn" type="button">Adapt Plan</button>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="decisionModal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button class="modal-close" id="modalClose" type="button" aria-label="Close">×</button>
+      <span class="section-kicker">AGENT DECISION</span>
+      <h2 id="modalTitle">How today's plan was created</h2>
+      <div class="modal-summary">
+        <div><span>Day</span><strong id="modalDay">Monday</strong></div>
+        <div><span>Selected subject</span><strong id="modalSubject">All subjects</strong></div>
+        <div><span>Readiness</span><strong id="modalReadiness">68%</strong></div>
+      </div>
+      <div class="modal-block"><h4>Observed</h4><p id="modalObserved">The agent observed your study load and current plan structure.</p></div>
+      <div class="modal-block"><h4>Decision</h4><p id="modalDecision">It kept the day balanced and placed active practice after concept learning.</p></div>
+      <div class="modal-block"><h4>Action</h4><p id="modalAction">Your exact time-wise plan is shown inside the day card and can be opened in Practice.</p></div>
+      <button class="primary-button modal-done" id="modalDone" type="button">Got it</button>
+    </div>
+  </div>
+
+  <div class="subject-drawer" id="subjectDrawer" aria-hidden="true">
+    <div class="subject-drawer-head">
+      <div><span class="section-kicker">SUBJECT SELECTOR</span><h3>Choose what you want to study</h3></div>
+      <button class="modal-close" id="subjectDrawerClose" type="button">×</button>
+    </div>
+    <p>Select a subject and Chanakya-Marg will show only today's related blocks.</p>
+    <div class="drawer-subjects" id="drawerSubjects"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <script src="learning-state.js"></script>
+  <script src="study.js"></script>
+  <script src="sidebar-profile.js"></script>
+</body>
+</html>

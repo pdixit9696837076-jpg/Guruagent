@@ -1,0 +1,1114 @@
+/* =========================
+   BASIC RESET
+========================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+body {
+    font-family: 'DM Sans', sans-serif;
+
+    background: #f7f4ed;
+
+    color: #202020;
+}
+
+
+
+/* =========================
+   SIDEBAR
+========================= */
+
+.sidebar {
+
+    position: fixed;
+
+    left: 0;
+    top: 0;
+
+    width: 235px;
+    height: 100vh;
+
+    background: #faf9f5;
+
+    border-right: 1px solid #e5e1d8;
+
+    padding: 28px 16px;
+
+    display: flex;
+
+    flex-direction: column;
+}
+
+
+.logo {
+
+    margin-left: 18px;
+
+    margin-bottom: 45px;
+}
+
+
+.logo h2 {
+
+    font-size: 20px;
+
+    margin-bottom: 4px;
+}
+
+
+.logo p {
+
+    font-size: 11px;
+
+    color: #777;
+}
+
+
+
+/* =========================
+   SIDEBAR NAVIGATION
+========================= */
+
+.sidebar nav {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 8px;
+}
+
+
+.sidebar nav a {
+
+    text-decoration: none;
+
+    color: #555;
+
+    padding: 13px 16px;
+
+    border-radius: 9px;
+
+    font-size: 15px;
+}
+
+
+.sidebar nav a:hover {
+
+    background: #eeeae1;
+}
+
+
+.sidebar nav a.active {
+
+    background: #171b55;
+
+    color: white;
+}
+
+
+
+/* =========================
+   POWERED TEXT
+========================= */
+
+.powered {
+
+    margin-top: auto;
+
+    padding: 18px 5px;
+
+    border-top: 1px solid #e5e1d8;
+
+    font-size: 12px;
+
+    line-height: 1.5;
+
+    color: #666;
+}
+
+
+
+/* =========================
+   MAIN CONTENT
+========================= */
+
+.main {
+
+    margin-left: 235px;
+
+    padding: 28px 28px 50px;
+}
+
+
+
+/* =========================
+   HEADER
+========================= */
+
+.top-header {
+
+    margin-bottom: 30px;
+}
+
+
+.top-header h1 {
+
+    font-size: 31px;
+
+    margin-bottom: 6px;
+}
+
+
+.top-header p {
+
+    color: #777;
+
+    font-size: 14px;
+}
+
+
+
+/* =========================
+   OVERVIEW
+========================= */
+
+.overview h2 {
+
+    font-size: 20px;
+
+    margin-bottom: 14px;
+}
+
+
+.overview-cards {
+
+    display: grid;
+
+    grid-template-columns: repeat(4, 1fr);
+
+    gap: 15px;
+}
+
+
+.card {
+
+    background: white;
+
+    border: 1px solid #e4dfd5;
+
+    border-radius: 13px;
+
+    padding: 20px;
+
+    min-height: 120px;
+}
+
+
+.card h3 {
+
+    font-size: 14px;
+
+    font-weight: normal;
+
+    color: #555;
+
+    margin-bottom: 9px;
+}
+
+
+.card strong {
+
+    font-size: 22px;
+
+    display: block;
+
+    margin-bottom: 6px;
+}
+
+
+.card p {
+
+    color: #777;
+
+    font-size: 13px;
+}
+
+
+
+/* =========================
+   PERFORMANCE SECTION
+========================= */
+
+.performance-section {
+
+    display: grid;
+
+    grid-template-columns: 1.5fr 1fr;
+
+    gap: 20px;
+
+    margin-top: 20px;
+}
+
+
+.performance-chart,
+.subject-performance {
+
+    background: white;
+
+    border: 1px solid #e2ddd4;
+
+    border-radius: 15px;
+
+    padding: 24px;
+}
+
+
+.performance-chart h2,
+.subject-performance h2 {
+
+    font-size: 19px;
+
+    margin-bottom: 5px;
+}
+
+
+.section-subtitle {
+
+    color: #777;
+
+    font-size: 13px;
+
+    margin-bottom: 20px;
+}
+
+
+
+/* =========================
+   CHART
+========================= */
+
+.chart {
+
+    height: 250px;
+
+    display: flex;
+
+    margin-top: 15px;
+}
+
+
+.chart-y-axis {
+
+    width: 45px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: space-between;
+
+    padding-bottom: 30px;
+
+    color: #888;
+
+    font-size: 11px;
+
+    text-align: right;
+
+    padding-right: 8px;
+}
+
+
+.chart-area {
+
+    position: relative;
+
+    flex: 1;
+
+    height: 100%;
+
+    border-bottom: 1px solid #ddd;
+}
+
+
+.grid-line {
+
+    position: absolute;
+
+    left: 0;
+
+    right: 0;
+
+    border-top: 1px dashed #e5e5e5;
+}
+
+
+.line-100 {
+    top: 0;
+}
+
+
+.line-80 {
+    top: 20%;
+}
+
+
+.line-60 {
+    top: 40%;
+}
+
+
+.line-40 {
+    top: 60%;
+}
+
+
+.line-20 {
+    top: 80%;
+}
+
+
+
+.chart-bars {
+
+    position: absolute;
+
+    left: 20px;
+    right: 20px;
+    bottom: 0;
+
+    height: 100%;
+
+    display: flex;
+
+    justify-content: space-around;
+
+    align-items: flex-end;
+}
+
+
+.bar-container {
+
+    height: 100%;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: flex-end;
+
+    align-items: center;
+
+    gap: 8px;
+
+    min-width: 55px;
+}
+
+
+.bar {
+
+    width: 42px;
+
+    background: #171b55;
+
+    border-radius: 6px 6px 0 0;
+
+    transition: 0.3s;
+}
+
+
+.bar:hover {
+
+    background: #292e72;
+}
+
+
+.bar-container span {
+
+    font-size: 11px;
+
+    color: #777;
+}
+
+
+
+/* =========================
+   SUBJECT PERFORMANCE
+========================= */
+
+.subject-item {
+
+    margin-bottom: 22px;
+}
+
+
+.subject-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 8px;
+
+    font-size: 13px;
+}
+
+
+.subject-header span {
+
+    color: #555;
+}
+
+
+.subject-header strong {
+
+    font-size: 13px;
+}
+
+
+.progress-bar {
+
+    width: 100%;
+
+    height: 8px;
+
+    background: #eeeae3;
+
+    border-radius: 10px;
+
+    overflow: hidden;
+}
+
+
+.progress-fill {
+
+    height: 100%;
+
+    background: #171b55;
+
+    border-radius: 10px;
+}
+
+
+
+/* =========================
+   STRONG + IMPROVEMENT AREAS
+========================= */
+
+.areas-section {
+
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 20px;
+
+    margin-top: 20px;
+}
+
+
+.areas-card {
+
+    background: white;
+
+    border: 1px solid #e2ddd4;
+
+    border-radius: 15px;
+
+    padding: 24px;
+}
+
+
+.areas-card h2 {
+
+    font-size: 18px;
+
+    margin-bottom: 5px;
+}
+
+
+.areas-card .section-subtitle {
+
+    margin-bottom: 10px;
+}
+
+
+.area-item {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding: 13px 0;
+
+    border-bottom: 1px solid #eeeae2;
+}
+
+
+.area-item:last-child {
+
+    border-bottom: none;
+}
+
+
+.area-item span {
+
+    font-size: 13px;
+
+    color: #555;
+}
+
+
+.area-item strong {
+
+    font-size: 14px;
+}
+
+
+
+/* =========================
+   RECENT PROGRESS
+========================= */
+
+.recent-progress {
+
+    background: white;
+
+    border: 1px solid #e2ddd4;
+
+    border-radius: 15px;
+
+    padding: 24px;
+
+    margin-top: 20px;
+}
+
+
+.recent-progress h2 {
+
+    font-size: 19px;
+
+    margin-bottom: 5px;
+}
+
+
+.progress-list {
+
+    margin-top: 5px;
+}
+
+
+.progress-row {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding: 16px 0;
+
+    border-bottom: 1px solid #eeeae2;
+}
+
+
+.progress-row:last-child {
+
+    border-bottom: none;
+}
+
+
+.progress-row > div:first-child strong {
+
+    display: block;
+
+    font-size: 14px;
+
+    margin-bottom: 5px;
+}
+
+
+.progress-row > div:first-child span {
+
+    display: block;
+
+    color: #777;
+
+    font-size: 12px;
+}
+
+
+.progress-score {
+
+    text-align: right;
+}
+
+
+.progress-score strong {
+
+    display: block;
+
+    font-size: 15px;
+
+    margin-bottom: 4px;
+}
+
+
+.progress-score span {
+
+    font-size: 11px;
+
+    color: #26945a;
+}
+
+.plan-progress-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 22px;
+}
+
+.plan-progress-kicker {
+    display: inline-block;
+    margin-bottom: 7px;
+    color: #737895;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .12em;
+}
+
+.plan-progress-heading .section-subtitle {
+    margin-top: 6px;
+    margin-bottom: 0;
+}
+
+.plan-progress-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 9px;
+}
+
+.plan-action-primary,
+.plan-action-secondary,
+.plan-topic-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 40px;
+    padding: 0 15px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: transform .18s ease, box-shadow .18s ease, background-color .18s ease, color .18s ease, border-color .18s ease;
+}
+
+.plan-action-primary {
+    color: #fff;
+    background: #171b55;
+    box-shadow: 0 5px 12px rgb(23 27 85 / 14%);
+}
+
+.plan-action-primary:hover {
+    background: #292e72;
+    box-shadow: 0 8px 18px rgb(23 27 85 / 20%);
+    transform: translateY(-2px);
+}
+
+.plan-action-secondary {
+    color: #292e72;
+    background: #f5f5fa;
+    border: 1px solid #e2e3ef;
+}
+
+.plan-action-secondary:hover {
+    background: #ececf6;
+    border-color: #c9cbe0;
+    transform: translateY(-2px);
+}
+
+.plan-action-primary:focus-visible,
+.plan-action-secondary:focus-visible,
+.plan-topic-action:focus-visible {
+    outline: 3px solid #8ea0ff;
+    outline-offset: 3px;
+}
+
+.plan-progress-overview {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 8px 18px;
+    margin: 20px 0 16px;
+    padding: 16px 18px;
+    border: 1px solid #e9e8f0;
+    border-radius: 12px;
+    background: linear-gradient(110deg, #f8f8fc, #fff);
+}
+
+.plan-progress-stats {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.plan-progress-stats strong {
+    color: #171b55;
+    font-family: 'Manrope', sans-serif;
+    font-size: 20px;
+}
+
+.plan-progress-stats span,
+.plan-progress-exam-date {
+    color: #737895;
+    font-size: 11px;
+}
+
+.plan-progress-exam-date {
+    justify-self: end;
+}
+
+.plan-progress-track {
+    grid-column: 1 / -1;
+    height: 8px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #e7e8f1;
+}
+
+.plan-progress-fill {
+    width: 0;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #575fc0, #2b9875);
+    transition: width .45s ease;
+}
+
+#learningPlanProgressTopics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+}
+
+.plan-topic-card {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 16px;
+    border: 1px solid #e8e6df;
+    border-radius: 13px;
+    background: #fffefa;
+    transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease, background-color .18s ease;
+}
+
+.plan-topic-card:hover {
+    transform: translateY(-3px);
+    border-color: #c8cae2;
+    background: #fff;
+    box-shadow: 0 9px 22px rgb(34 39 83 / 9%);
+}
+
+.plan-topic-card.is-complete {
+    border-color: #cce4d7;
+    background: #f8fcf9;
+}
+
+.plan-topic-header {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 11px;
+}
+
+.plan-topic-day {
+    color: #737895;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .08em;
+}
+
+.plan-topic-status {
+    padding: 5px 8px;
+    border-radius: 999px;
+    color: #785b16;
+    background: #fff3d3;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.plan-topic-status.is-complete {
+    color: #26704c;
+    background: #e5f4eb;
+}
+
+.plan-topic-card h3 {
+    color: #24263b;
+    font-size: 14px;
+    line-height: 1.45;
+}
+
+.plan-topic-details {
+    margin-top: 6px;
+    color: #737895;
+    font-size: 11px;
+}
+
+.plan-topic-result {
+    margin-top: 12px;
+    color: #737895;
+    font-size: 11px;
+}
+
+.plan-topic-action {
+    min-height: 34px;
+    margin-top: 14px;
+    padding: 0 11px;
+    color: #292e72;
+    border: 1px solid #e0e1ee;
+    background: #f5f5fa;
+}
+
+.plan-topic-action:hover {
+    color: #fff;
+    border-color: #292e72;
+    background: #292e72;
+    transform: translateY(-1px);
+}
+
+
+
+/* =========================
+   RESPONSIVE DESIGN
+========================= */
+
+
+/* ---------- TABLET ---------- */
+
+@media (max-width: 900px) {
+
+    .sidebar {
+
+        width: 200px;
+    }
+
+
+    .main {
+
+        margin-left: 200px;
+
+        padding: 20px;
+    }
+
+
+    .overview-cards {
+
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+
+    .performance-section {
+
+        grid-template-columns: 1fr;
+    }
+
+
+    .areas-section {
+
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+
+/* ---------- MOBILE ---------- */
+
+@media (max-width: 600px) {
+
+    body {
+
+        font-size: 14px;
+    }
+
+
+    /* Sidebar */
+
+    .sidebar {
+
+        position: relative;
+
+        width: 100%;
+
+        height: auto;
+
+        padding: 15px;
+    }
+
+
+    .sidebar nav {
+
+        display: flex;
+
+        overflow-x: auto;
+
+        gap: 8px;
+    }
+
+
+    .sidebar nav a {
+
+        white-space: nowrap;
+
+        padding: 10px;
+    }
+
+
+    .powered {
+
+        display: none;
+    }
+
+
+
+    /* Main */
+
+    .main {
+
+        margin-left: 0;
+
+        padding: 15px;
+    }
+
+
+
+    /* Header */
+
+    .top-header h1 {
+
+        font-size: 25px;
+    }
+
+
+
+    /* Overview */
+
+    .overview-cards {
+
+        grid-template-columns: 1fr;
+    }
+
+
+    .card {
+
+        padding: 18px;
+    }
+
+
+
+    /* Performance */
+
+    .performance-section {
+
+        grid-template-columns: 1fr;
+    }
+
+
+    .performance-chart,
+    .subject-performance {
+
+        padding: 20px;
+    }
+
+
+
+    /* Areas */
+
+    .areas-section {
+
+        grid-template-columns: 1fr;
+    }
+
+
+    .areas-card {
+
+        padding: 20px;
+    }
+
+
+
+    /* Chart */
+
+    .chart {
+
+        height: 220px;
+    }
+
+
+    .bar {
+
+        width: 30px;
+    }
+
+
+
+    /* Recent Progress */
+
+    .recent-progress {
+
+        padding: 20px;
+    }
+
+
+    .progress-row {
+
+        gap: 15px;
+    }
+
+    .plan-progress-heading {
+        flex-direction: column;
+    }
+
+    .plan-progress-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .plan-progress-overview {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        padding: 14px;
+    }
+
+    .plan-progress-stats {
+        flex-wrap: wrap;
+    }
+
+    .plan-progress-exam-date {
+        justify-self: start;
+    }
+
+    .plan-progress-track {
+        grid-column: auto;
+    }
+
+    #learningPlanProgressTopics {
+        grid-template-columns: 1fr;
+    }
+
+}

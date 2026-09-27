@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile — GuruAgent</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="profile.css">
+    <link rel="stylesheet" href="study-ui.css">
+    <link rel="stylesheet" href="guru-theme.css">
+    
+    <!-- 1. Supabase Library CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- 2. Aapki Client File (File Name: supabase-client.js) -->
+    <script src="supabase-client.js"></script>
+
+    <!-- 3. Profile JS File -->
+    <script src="profile.js"></script>
+</head>
+<body>
+
+    <!-- Top Navigation Bar -->
+    <header class="navbar">
+        <div class="nav-container">
+            <a href="dashboard.html" class="logo-group">
+                <img class="logo-box" src="GuruAgentLogo.jpg?v=202609252351" alt="">
+                <div class="logo-text">
+                    <span class="logo-title">GuruAgent</span>
+                    <span class="logo-subtitle">IKS Adaptive AI</span>
+                </div>
+            </a>
+            <div class="nav-actions">
+                <a href="dashboard.html" class="btn-back">
+                    <i data-lucide="arrow-left"></i> Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Profile Main Container -->
+    <main class="profile-container">
+        <div class="profile-layout">
+            
+            <!-- Left Sidebar Card -->
+            <aside class="profile-sidebar">
+                <div class="card avatar-card">
+                    <div class="avatar-wrapper">
+                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=256&auto=format&fit=crop" id="profile-img-preview" alt="Profile Picture">
+                        <label for="avatar-upload" class="avatar-edit-btn" title="Change Profile Picture">
+                            <i data-lucide="camera"></i>
+                        </label>
+                        <input type="file" id="avatar-upload" accept="image/*" class="hidden-input">
+                    </div>
+                    <!-- Dynamic Display Name and Email -->
+                    <h2 class="user-name" id="display-name">Loading...</h2>
+                    <p class="user-email" id="display-email">loading...</p>
+                    <span class="badge-role"><i data-lucide="shield-check"></i> Pro Student Member</span>
+
+                    <div class="profile-stats">
+                        <div class="stat-item">
+                            <span class="stat-number">18</span>
+                            <span class="stat-label">Days Streak</span>
+                        </div>
+                        <div class="stat-divider"></div>
+                        <div class="stat-item">
+                            <span class="stat-number">84%</span>
+                            <span class="stat-label">Mastery</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation Tabs -->
+                <div class="card profile-nav-card">
+                    <button class="nav-tab active" data-tab="personal-info">
+                        <i data-lucide="user"></i> Profile & Address
+                    </button>
+                    <button class="nav-tab" data-tab="academic-info">
+                        <i data-lucide="graduation-cap"></i> Target Exam & Goals
+                    </button>
+                    <button class="nav-tab" data-tab="security">
+                        <i data-lucide="lock"></i> Security & Password
+                    </button>
+                    <button class="nav-tab danger-tab" id="logout-btn">
+                        <i data-lucide="log-out"></i> Log Out
+                    </button>
+                </div>
+            </aside>
+
+            <!-- Right Content Area -->
+            <section class="profile-content">
+                
+                <!-- Tab 1: Personal Details & Addresses -->
+                <div class="tab-content active" id="personal-info">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>Account & Personal Information</h3>
+                                <p>Manage your profile details, address, and personal information.</p>
+                            </div>
+                        </div>
+                        <form id="personal-form" class="profile-form">
+                            
+                            <div class="form-grid">
+                                <!-- Full Name -->
+                                <div class="form-group">
+                                    <label for="fullname">Full Name</label>
+                                    <div class="input-wrapper">
+                                        <i data-lucide="user" class="input-icon"></i>
+                                        <input type="text" id="fullname" placeholder="Loading name...">
+                                    </div>
+                                </div>
+                                
+                                <!-- Email Address (Readonly) -->
+                                <div class="form-group">
+                                    <label for="email">Email Address</label>
+                                    <div class="input-wrapper disabled">
+                                        <i data-lucide="mail" class="input-icon"></i>
+                                        <input type="email" id="email" placeholder="Loading email..." readonly disabled>
+                                    </div>
+                                </div>
+
+                                <!-- Phone Number -->
+                                <div class="form-group full-width">
+                                    <label for="phone">Phone Number</label>
+                                    <div class="input-wrapper">
+                                        <i data-lucide="phone" class="input-icon"></i>
+                                        <input type="tel" id="phone" placeholder="Loading phone...">
+                                    </div>
+                                </div>
+
+                                <!-- Date of Birth (DOB) -->
+                                <div class="form-group full-width">
+                                    <label for="dob">Date of Birth</label>
+                                    <div class="input-wrapper">
+                                        <i data-lucide="calendar" class="input-icon"></i>
+                                        <input type="date" id="dob">
+                                    </div>
+                                </div>
+
+                                <!-- Home Address -->
+                                <div class="form-group full-width">
+                                    <label for="home-address">Home Address</label>
+                                    <div class="input-wrapper align-start">
+                                        <i data-lucide="home" class="input-icon textarea-icon"></i>
+                                        <textarea id="home-address" rows="2" placeholder="Enter your home address..."></textarea>
+                                    </div>
+                                </div>
+
+                                <!-- Work / College Address -->
+                                <div class="form-group full-width">
+                                    <label for="work-address">Work / College Address</label>
+                                    <div class="input-wrapper align-start">
+                                        <i data-lucide="building-2" class="input-icon textarea-icon"></i>
+                                        <textarea id="work-address" rows="2" placeholder="Enter your work or college address..."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn-save">
+                                    <i data-lucide="save"></i> Save Details
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Tab 2: Academic Goals -->
+                <div class="tab-content" id="academic-info">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>Target Exam & Preferences</h3>
+                                <p>Customize your learning path according to your targets.</p>
+                            </div>
+                        </div>
+                        <form id="academic-form" class="profile-form">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="target-exam">Target Exam</label>
+                                    <div class="input-wrapper">
+                                        <i data-lucide="award" class="input-icon"></i>
+                                        <select id="target-exam">
+                                            <option value="bca" selected>BCA / University Exams</option>
+                                            <option value="jee">JEE Main & Advanced</option>
+                                            <option value="gate">GATE Computer Science</option>
+                                            <option value="neet">NEET UG</option>
+                                            <option value="cuet">CUET UG</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="target-year">Target Exam Year</label>
+                                    <div class="input-wrapper">
+                                        <i data-lucide="calendar" class="input-icon"></i>
+                                        <select id="target-year">
+                                            <option value="2026" selected>2026</option>
+                                            <option value="2027">2027</option>
+                                            <option value="2028">2028</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group full-width">
+                                    <label for="study-hours">Daily Available Study Hours</label>
+                                    <div class="input-wrapper">
+                                        <i data-lucide="clock" class="input-icon"></i>
+                                        <input type="number" id="study-hours" value="4" min="1" max="16">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn-save">
+                                    <i data-lucide="check"></i> Save Preferences
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Tab 3: Security & Password -->
+                <div class="tab-content" id="security">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>Security Settings</h3>
+                                <p>Manage and update your account password.</p>
+                            </div>
+                        </div>
+                        <form id="security-form" class="profile-form">
+                            <div class="form-group">
+                                <label for="current-pwd">Current Password</label>
+                                <div class="input-wrapper">
+                                    <i data-lucide="lock" class="input-icon"></i>
+                                    <input type="password" id="current-pwd" placeholder="••••••••" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="new-pwd">New Password</label>
+                                <div class="input-wrapper">
+                                    <i data-lucide="key" class="input-icon"></i>
+                                    <input type="password" id="new-pwd" placeholder="••••••••" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="confirm-pwd">Confirm New Password</label>
+                                <div class="input-wrapper">
+                                    <i data-lucide="shield-check" class="input-icon"></i>
+                                    <input type="password" id="confirm-pwd" placeholder="••••••••" required>
+                                </div>
+                            </div>
+
+                            <div class="forgot-password-link-wrapper">
+                                <a href="forgot-password.html" class="forgot-link">Forgot Password?</a>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn-save">
+                                    <i data-lucide="shield" style="width: 18px;"></i> Update Password
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </section>
+        </div>
+    </main>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast hidden">
+        <i data-lucide="check-circle" class="toast-icon"></i>
+        <span id="toast-message">Profile details updated successfully!</span>
+    </div>
+
+    <script>
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+    </script>
+</body>
+</html>

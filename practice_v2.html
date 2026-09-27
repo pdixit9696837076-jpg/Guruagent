@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+    <meta http-equiv="refresh" content="0; url=practice.html">
+
+    <title>GuruAgent - Practice Arena</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css?v=2"
+    >
+    <link rel="stylesheet" href="guru-theme.css">
+
+</head>
+
+
+<body>
+
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside class="sidebar">
+        <a class="logo" href="#" aria-label="GuruAgent home" title="GuruAgent">
+            <span class="logo-icon" aria-hidden="true">🌐</span>
+        </a>
+
+        <nav class="sidebar-menu" aria-label="Main navigation">
+            <a href="#" class="menu-item" aria-label="Home" title="Home"><span aria-hidden="true">⌂</span></a>
+            <a href="#" class="menu-item" aria-label="Study plan" title="Study plan"><span aria-hidden="true">☷</span></a>
+            <a href="#practice" class="menu-item active" aria-label="Practice" title="Practice"><span aria-hidden="true">☑</span></a>
+            <a href="#history" class="menu-item" aria-label="Progress" title="Progress"><span aria-hidden="true">⌁</span></a>
+            <a href="#" class="menu-item" aria-label="Profile" title="Profile"><span aria-hidden="true">♙</span></a>
+            <a href="#" class="menu-item" aria-label="Settings" title="Settings"><span aria-hidden="true">⚙</span></a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <span class="status-dot" aria-label="Online"></span>
+            <span class="profile-avatar" aria-label="NU">NU</span>
+        </div>
+    </aside>
+
+
+
+    <!-- ================= MAIN CONTENT ================= -->
+
+    <main class="main-content">
+
+
+        <!-- ================= TOP HEADER ================= -->
+
+        <header class="top-header">
+            <div class="header-copy">
+                <h1>Practice Arena</h1>
+                <p class="page-subtitle">Personalized practice generated and adapted by GuruAgent.</p>
+            </div>
+            <time id="headerDate" class="header-date" aria-label="Today's date"></time>
+        </header>
+
+
+
+        <!-- ================= OVERVIEW ================= -->
+
+        <section class="overview-section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <h2>
+                        Overview
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="overview-cards">
+
+
+                <div class="overview-card" id="totalPracticeCard" tabindex="0" role="button" aria-label="View practice history">
+                    <div class="overview-info">
+                        <span>Daily Goal</span>
+                        <h3 id="totalPracticeValue">0 / 30</h3>
+                        <small>Questions <span class="goal-check">✓</span></small>
+                    </div>
+                </div>
+
+                <div class="overview-card" id="accuracyCard" tabindex="0" role="button" aria-label="View accuracy for each practice">
+                    <div class="overview-info">
+                        <span>Accuracy</span>
+                        <h3 id="accuracyValue">0%</h3>
+                    </div>
+                </div>
+
+                <div class="overview-card" id="currentStreakCard" tabindex="0" role="button" aria-label="View current streak days">
+                    <div class="overview-info">
+                        <span>Current Streak:</span>
+                        <h3><span id="streakValue">0 Days</span> <span class="streak-fire" aria-hidden="true">🔥</span></h3>
+                    </div>
+                </div>
+
+                <div class="overview-card weak-area-card">
+                    <div class="overview-info">
+                        <span>Weak Area:</span>
+                        <h3 id="weakAreaValue">Process Scheduling</h3>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="practice-history-panel" id="practiceHistoryPanel" hidden>
+
+                <div class="practice-history-header">
+                    <h3>Practice History</h3>
+                    <button type="button" id="closeHistoryBtn" class="close-history-btn">×</button>
+                </div>
+
+                <div id="practiceHistoryList" class="practice-history-list"></div>
+
+            </div>
+
+            <div class="practice-history-panel" id="solvedQuestionsPanel" hidden>
+
+                <div class="practice-history-header">
+                    <h3>Solved Questions</h3>
+                    <button type="button" id="closeSolvedQuestionsBtn" class="close-history-btn" aria-label="Close solved questions">×</button>
+                </div>
+
+                <div id="solvedQuestionsList" class="solved-questions-list"></div>
+
+            </div>
+
+            <div class="practice-history-panel" id="accuracyHistoryPanel" hidden>
+
+                <div class="practice-history-header">
+                    <h3>Accuracy by Practice</h3>
+                    <button type="button" id="closeAccuracyHistoryBtn" class="close-history-btn" aria-label="Close accuracy history">×</button>
+                </div>
+
+                <div id="accuracyHistoryList" class="practice-history-list"></div>
+
+            </div>
+
+            <div class="practice-history-panel" id="currentStreakPanel" hidden>
+
+                <div class="practice-history-header">
+                    <h3>Current Streak Days</h3>
+                    <button type="button" id="closeCurrentStreakBtn" class="close-history-btn" aria-label="Close current streak">×</button>
+                </div>
+
+                <div id="currentStreakList" class="practice-history-list"></div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================= FEATURED + AI FOCUS ================= -->
+
+        <section class="featured-layout" id="practice" aria-label="Practice recommendations">
+            <article class="featured-practice">
+                <div class="featured-content">
+                    <span class="featured-badge">Recommended by GuruAgent</span>
+                    <p class="featured-kicker">Featured Practice</p>
+                    <h2>Operating Systems: Process Scheduling</h2>
+                    <div class="practice-meta">
+                        <span>▦ &nbsp;10 Questions</span>
+                        <span>▮ &nbsp;Medium Difficulty</span>
+                        <span>◷ &nbsp;15 min</span>
+                    </div>
+                    <p class="previous-accuracy">Previous Accuracy: <strong id="featuredAccuracy">42%</strong><span aria-hidden="true">&nbsp; | &nbsp;</span> Improvement Target: <strong>70%+</strong></p>
+                    <a class="start-practice-btn" href="quiz.html?subject=os&amp;difficulty=medium">Start Practice <span class="arrow" aria-hidden="true">→</span></a>
+                </div>
+
+                <aside class="ai-focus-card">
+                    <p class="ai-label">AI Focus</p>
+                    <p class="ai-explainer">GuruAgent identified this as your key improvement area.</p>
+                    <div class="focus-top"><span>Current Accuracy</span><strong id="aiCurrentAccuracy">42%</strong></div>
+                    <div class="focus-bar" role="meter" aria-label="Current accuracy" aria-valuemin="0" aria-valuemax="100" aria-valuenow="42"><div class="focus-progress" id="aiAccuracyProgress" style="width: 42%"></div></div>
+                    <div class="focus-top target-row"><span>Target Accuracy</span><strong>70%+</strong></div>
+                    <div class="ai-topic"><span aria-hidden="true">🎯</span><div><strong id="aiFocusTopic">Process Scheduling</strong><small>Needs improvement</small></div></div>
+                    <div class="ai-message ai-insight"><p id="aiFocusMessage">Review Process Scheduling to improve your next result.</p></div>
+                    <button type="button" id="aiFocusToggle" class="ai-focus-toggle" aria-expanded="false" aria-controls="aiFocusDetails">View weak areas</button>
+                    <div id="aiFocusDetails" class="ai-focus-details" hidden>
+                        <h4>Subject performance</h4>
+                        <div id="aiSubjectPerformance" class="ai-subject-performance"></div>
+                        <p id="aiImprovementMessage" class="ai-improvement-message"></p>
+                    </div>
+                </aside>
+            </article>
+
+            <section class="quick-practice" aria-labelledby="quickPracticeTitle">
+                <h2 id="quickPracticeTitle">Quick Practice</h2>
+                <p>Choose a topic and start practicing.</p>
+                <nav class="quick-practice-list" aria-label="Practice subjects">
+                    <a href="quiz.html?subject=python&amp;difficulty=easy"><span><strong>Python</strong><small>Programming · 10 Questions</small><small>Easy to Medium</small></span><span class="quick-arrow" aria-hidden="true">→</span></a>
+                    <a href="quiz.html?subject=os&amp;difficulty=medium"><span><strong>Operating Systems</strong><small>Core Subject · 10 Questions</small><small>Medium Difficulty</small></span><span class="quick-arrow" aria-hidden="true">→</span></a>
+                    <a href="quiz.html?subject=dbms&amp;difficulty=medium"><span><strong>DBMS</strong><small>Core Subject · 10 Questions</small><small>Medium Difficulty</small></span><span class="quick-arrow" aria-hidden="true">→</span></a>
+                    <a href="quiz.html?subject=se&amp;difficulty=easy"><span><strong>Software Engineering</strong><small>Core Subject · 10 Questions</small><small>Easy to Medium</small></span><span class="quick-arrow" aria-hidden="true">→</span></a>
+                </nav>
+            </section>
+        </section>
+
+        <section class="recent-history" id="history" aria-labelledby="recentHistoryTitle">
+            <h2 id="recentHistoryTitle">Recent Practice History</h2>
+            <div class="history-table-wrap">
+                <table>
+                    <thead><tr><th scope="col">Practice Set</th><th scope="col">Date</th><th scope="col">Questions</th><th scope="col">Score</th><th scope="col">Time Spent</th></tr></thead>
+                    <tbody id="recentPracticeRows"><tr><td colspan="5" class="history-empty">No practice history yet.</td></tr></tbody>
+                </table>
+            </div>
+        </section>
+
+
+    </main>
+
+
+
+    <!-- ================= JAVASCRIPT ================= -->
+
+    <script src="script.js"></script>
+
+
+</body>
+
+</html>

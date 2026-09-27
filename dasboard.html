@@ -1,0 +1,1526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GuruAgent — Dynamic Dashboard</title>
+<style>
+:root {
+  --bg: #F4EFE6;           /* Warm Rich Cream Background */
+  --card: #FAF8F5;         /* Crisp White Cream Cards */
+  --cream: #E7DFD3;        /* Soft Warm Accent Cream */
+  --sb-bg: #1C1917;        /* Dark Espresso Sidebar Background */
+  --sb-tx: #F5F5F4;        /* Light Cream Text for Sidebar */
+  --sb-hover: #292524;     /* Dark Hover State */
+  --tx: #26221F;           /* Deep Charcoal Text */
+  --mu: #78716C;           /* Warm Muted Text */
+  --bd: #DDD5C7;           /* Soft Warm Border */
+  --ac: #D97706;           /* Warm Gold Amber Accent */
+  --ac-dark: #B45309;      /* Dark Amber */
+  --ok: #2E7D32;           /* Soft Green Success */
+  --sh: 0 4px 16px rgba(40, 30, 20, 0.08);
+  --sh-hover: 0 12px 28px rgba(180, 83, 9, 0.18);
+  box-sizing: border-box;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; background: var(--bg); color: var(--tx); font: 15px/1.5 system-ui, -apple-system, sans-serif; }
+body { overflow-x: hidden; }
+a { color: inherit; text-decoration: none; }
+h1, h2, h3 { margin: 0 0 8px; font-weight: 700; }
+p { margin: 8px 0; }
+.mu { color: var(--mu); }
+
+#app { display: flex; min-height: 100vh; }
+
+/* Dark Espresso Collapsible Sidebar */
+.sb {
+  width: 240px;
+  flex: none;
+  background: var(--sb-bg);
+  color: var(--sb-tx);
+  border-right: 1px solid rgba(255,255,255,0.08);
+  padding: 18px 12px;
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: width 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  z-index: 10;
+}
+.sb.c { width: 72px; }
+.sb.c .lb { display: none; }
+.sb.c .nv { justify-content: center; padding-inline: 10px; }
+
+.logo {
+  font-weight: 800;
+  font-size: 19px;
+  padding: 8px 12px;
+  white-space: nowrap;
+  color: #FDE68A;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: transform 0.2s ease;
+}
+.logo:hover { transform: scale(1.03); }
+
+/* Sidebar Items - Rich Hover */
+.nv {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  padding: 11px 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  color: #A8A29E;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.nv:hover {
+  background: var(--sb-hover);
+  color: #FDE68A;
+  transform: translateX(4px);
+}
+.nv.on {
+  background: var(--ac);
+  color: #FFFFFF;
+  font-weight: 600;
+  box-shadow: 0 4px 14px rgba(217, 119, 6, 0.4);
+}
+.nv.on:hover {
+  background: var(--ac-dark);
+  transform: translateX(4px) scale(1.01);
+}
+.nv span:first-child { width: 22px; text-align: center; font-size: 17px; }
+
+/* Main Content Area */
+.mn { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+
+/* Header Bar */
+.hd {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  padding: 14px 28px;
+  background: #231F1D;
+  color: #FAF8F5;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+.hd .btn.ghost { flex: none; }
+.top-title { display: flex; align-items: center; gap: 10px; min-width: 150px; }
+.top-title small { display: block; color: #A8A29E; font-weight: 500; font-size: 11px; }
+.top-actions { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+.top-actions .btn.amber,
+.top-actions .pill.dark {
+  display: inline-flex;
+  min-width: 148px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+}
+
+.pg { padding: 28px; max-width: 1120px; margin: 0 auto; width: 100%; }
+
+/* Cards — FULL HOVER LIFT & GLOW EFFECT */
+.card {
+  background: var(--card);
+  border: 1px solid var(--bd);
+  border-radius: 20px;
+  padding: 22px;
+  box-shadow: var(--sh);
+  margin-bottom: 20px;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--sh-hover);
+  border-color: var(--ac);
+}
+.card.k { cursor: pointer; }
+.section-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 14px;
+  padding: 9px 14px;
+  border: 1px solid var(--bd);
+  border-radius: 10px;
+  background: rgba(255,255,255,.7);
+  color: var(--tx);
+  font-size: 13px;
+  font-weight: 700;
+  transition: transform .22s ease, background-color .22s ease, border-color .22s ease, box-shadow .22s ease;
+}
+.section-action:hover {
+  transform: translateY(-2px);
+  background: #FFF8EE;
+  border-color: var(--ac);
+  box-shadow: 0 6px 14px rgba(217,119,6,.16);
+}
+.section-action.amber {
+  background: var(--ac);
+  border-color: var(--ac);
+  color: #FFF;
+}
+.section-action.amber:hover { background: var(--ac-dark); color: #FFF; }
+
+.g2 { display: grid; grid-template-columns: 1.35fr 1fr; gap: 20px; }
+.g3 { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+.hero {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 24px;
+  margin-bottom: 20px;
+  border-radius: 22px;
+  color: #FFF7ED;
+  background: radial-gradient(circle at 90% 10%, rgba(251,191,36,.25), transparent 34%), linear-gradient(135deg, #292524, #57534E);
+  box-shadow: 0 14px 30px rgba(41,37,36,.2);
+}
+.hero h1 { color: #FFF7ED; margin-bottom: 4px; }
+.hero p { color: #D6D3D1; margin: 0; }
+.hero .btn { background: #F59E0B; color: #1C1917; }
+.domain-tools { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+.domain-tool { border: 1px solid var(--bd); border-radius: 16px; padding: 16px; background: var(--card); transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease; }
+.domain-tool:hover { transform: translateY(-4px); border-color: var(--ac); box-shadow: var(--sh-hover); }
+.domain-tool h3 { margin-bottom: 5px; font-size: 15px; }
+.domain-tool p { margin: 0; color: var(--mu); font-size: 13px; }
+.tool-row { display: flex; gap: 8px; margin-top: 12px; }
+.tool-row input { min-width: 0; width: 100%; border: 1px solid var(--bd); border-radius: 9px; padding: 8px; font: inherit; }
+.tool-row input:focus { outline: none; border-color: var(--ac); box-shadow: 0 0 0 3px rgba(217,119,6,.14); }
+.domain-tech { --ac: #506DB6; --ac-dark: #405B9D; --cream: #E9EEFB; }
+.domain-tech .hero { background: radial-gradient(circle at 90% 10%, rgba(96,165,250,.3), transparent 34%), linear-gradient(135deg, #172554, #1E3A8A); }
+.domain-accounting { --ac: #506DB6; --ac-dark: #405B9D; --cream: #E9EEFB; }
+.domain-accounting .hero { background: radial-gradient(circle at 90% 10%, rgba(52,211,153,.3), transparent 34%), linear-gradient(135deg, #064E3B, #065F46); }
+.domain-rural { --ac: #506DB6; --ac-dark: #405B9D; --cream: #E9EEFB; }
+.domain-rural .hero { background: radial-gradient(circle at 90% 10%, rgba(163,230,53,.3), transparent 34%), linear-gradient(135deg, #365314, #3F6212); }
+.metric-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+.metric { padding: 15px 16px; border: 1px solid var(--bd); border-radius: 16px; background: rgba(250,248,245,.75); }
+.metric strong { display: block; font-size: 24px; line-height: 1.1; }
+.metric span { color: var(--mu); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; }
+@media(max-width: 780px) {
+  .g2 { grid-template-columns: 1fr; }
+  .pg { padding: 18px; }
+  .hd { padding: 12px 16px; }
+  .sb { position: fixed; left: 0; top: 0; transform: translateX(0); box-shadow: 12px 0 30px rgba(0,0,0,.2); }
+  .sb.c { width: 240px; transform: translateX(-100%); }
+  .sb.c .lb { display: inline; }
+  .top-title { min-width: 0; }
+  .top-title small { display: none; }
+  .top-actions { gap: 6px; }
+  .top-actions .pill { display: none; }
+  .top-actions .btn { padding: 9px 11px; font-size: 0; }
+  .top-actions .btn::first-letter { font-size: 16px; }
+  .hero { align-items: flex-start; flex-direction: column; }
+  .metric-grid { grid-template-columns: 1fr; }
+  .domain-tools { grid-template-columns: 1fr; }
+}
+
+/* Buttons — Hover Scale & Color Shift */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--tx);
+  color: var(--bg);
+  border: 0;
+  border-radius: 12px;
+  padding: 10px 18px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 6px 16px rgba(38, 34, 31, 0.25);
+}
+.btn.ghost { background: var(--cream); color: var(--tx); }
+.btn.ghost:hover { background: #DDD3C1; }
+.btn.amber { background: var(--ac); color: #FFF; }
+.btn.amber:hover { background: var(--ac-dark); box-shadow: 0 6px 18px rgba(217, 119, 6, 0.35); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+
+/* Pills & Badges Hover */
+.pill {
+  display: inline-block;
+  background: var(--cream);
+  color: var(--tx);
+  border-radius: 99px;
+  padding: 5px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+.pill:hover { transform: scale(1.05); background: #DCD2C0; }
+.pill.dark { background: #342E2B; color: #FDE68A; }
+.pill.dark:hover { background: #443C38; color: #FFF; }
+
+/* Action Plan Items — HOVER SLIDE & HIGHLIGHT EFFECT */
+.ti {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 16px;
+  background: #FFF;
+  border: 1px solid var(--bd);
+  border-radius: 14px;
+  margin-top: 8px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.ti:hover {
+  transform: translateX(6px);
+  background: #FFF8EE;
+  border-color: var(--ac);
+  box-shadow: 0 4px 12px rgba(217, 119, 6, 0.12);
+}
+.ti.dn { opacity: 0.55; text-decoration: line-through; background: rgba(231, 223, 211, 0.4); }
+.ti.dn:hover { transform: translateX(4px); opacity: 0.8; }
+.ti small { margin-left: auto; color: var(--mu); font-weight: 600; }
+
+.bar { height: 10px; background: var(--cream); border-radius: 99px; overflow: hidden; margin: 8px 0; }
+.bar i { display: block; height: 100%; background: var(--ac); border-radius: 99px; transition: width 0.4s ease; }
+
+/* Quiz Options — Hover Glow */
+.opt {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: #FFF;
+  border: 1px solid var(--bd);
+  border-radius: 12px;
+  padding: 11px 14px;
+  margin-top: 8px;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.opt:hover {
+  background: #FFFDF9;
+  border-color: var(--ac);
+  transform: translateX(4px);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+}
+.opt.ok { background: rgba(46, 125, 50, 0.15); border-color: var(--ok); font-weight: 600; }
+.opt.no { background: rgba(185, 28, 28, 0.15); border-color: #B91C1C; }
+
+/* Onboarding Modal Overlay */
+.ov {
+  position: fixed;
+  inset: 0;
+  background: rgba(28, 25, 23, 0.65);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  z-index: 50;
+}
+.md {
+  background: var(--card);
+  border-radius: 24px;
+  padding: 28px;
+  width: 100%;
+  max-width: 580px;
+  max-height: 90vh;
+  overflow: auto;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+  border: 1px solid var(--bd);
+}
+.chat-md {
+  max-width: 760px;
+  padding: 0;
+  overflow: hidden;
+  background: #171717;
+  color: #F5F5F5;
+  border: 1px solid #333;
+  box-shadow: 0 28px 80px rgba(0,0,0,.45);
+}
+.chat-head { display:flex; align-items:center; gap:12px; padding:18px 22px; border-bottom:1px solid #303030; }
+.chat-avatar { width:36px; height:36px; display:block; border-radius:50%; background:#fff; object-fit:contain; padding:2px; border:2px solid #363744; }
+.chat-head strong { display:block; font-size:15px; }
+.chat-head small { color:#A3A3A3; }
+.chat-skip { margin-left:auto; padding:7px 10px; border:1px solid #555; border-radius:8px; background:transparent; color:#E5E5E5; font:inherit; font-size:12px; cursor:pointer; }
+.chat-skip:hover { border-color:#999; background:#292929; }
+.chat-close { margin-left:0; border:0; color:#A3A3A3; background:transparent; font-size:20px; cursor:pointer; transition:color .2s, transform .2s; }
+.chat-close:hover { color:#FFF; transform:rotate(90deg); }
+.chat-body { min-height:330px; max-height:52vh; overflow:auto; padding:28px 24px 14px; }
+.chat-welcome { text-align:center; padding:8px 0 20px; }
+.chat-welcome h2 { color:#FFF; margin-bottom:8px; }
+.chat-welcome p { color:#A3A3A3; max-width:540px; margin:0 auto; }
+.chat-msg { display:flex; gap:10px; margin:14px 0; animation:chatIn .22s ease-out; }
+.chat-msg.user { justify-content:flex-end; }
+.chat-bubble { max-width:78%; padding:11px 14px; border-radius:16px 16px 16px 4px; background:#292929; color:#E5E5E5; white-space:pre-wrap; }
+.chat-msg.user .chat-bubble { border-radius:16px 16px 4px 16px; background:#506DB6; color:#FFF; }
+.chat-input-wrap { margin:8px 18px 18px; padding:8px 10px 8px 16px; display:flex; align-items:flex-end; gap:8px; border:1px solid #3A3A3A; border-radius:18px; background:#242424; transition:border-color .2s, box-shadow .2s; }
+.chat-input-wrap:focus-within { border-color:#666; box-shadow:0 0 0 3px rgba(96,165,250,.14); }
+.chat-input { flex:1; min-height:28px; max-height:100px; resize:none; margin:0; padding:5px 0; border:0; outline:0; background:transparent; color:#FFF; }
+.chat-input::placeholder { color:#999; }
+.chat-icon { width:32px; height:32px; display:grid; place-items:center; border:0; border-radius:50%; background:transparent; color:#A3A3A3; cursor:pointer; transition:background .2s, color .2s, transform .2s; }
+.chat-icon:hover { background:#3A3A3A; color:#FFF; transform:translateY(-1px); }
+.chat-send { background:#11172E; color:#FFF; }
+.chat-send:hover { background:#26345E; }
+.chat-status { min-height:18px; padding:0 22px 10px; color:#A3A3A3; font-size:12px; }
+.assistant-launcher { position:fixed; right:24px; bottom:24px; z-index:40; display:grid; place-items:center; width:56px; height:56px; padding:6px; border:0; border-radius:50%; background:#11172E; cursor:pointer; box-shadow:0 12px 28px rgba(17,23,46,.24); }
+.assistant-launcher img { display:block; width:100%; height:100%; border-radius:10px; background:#FFF; object-fit:contain; }
+.assistant-pop { position:fixed; right:24px; bottom:92px; z-index:41; display:flex; flex-direction:column; width:min(390px,calc(100vw - 32px)); height:min(540px,calc(100dvh - 116px)); overflow:hidden; border:1px solid #333; border-radius:20px; background:#171717; color:#F5F5F5; box-shadow:0 24px 60px rgba(0,0,0,.35); animation:chatIn .2s ease-out; }
+.assistant-pop .chat-head { flex:none; }
+.assistant-pop .chat-close { margin-left:auto; }
+.assistant-pop .chat-body { flex:1; min-height:0; max-height:none; padding:18px; }
+.assistant-pop .chat-welcome { padding:12px 0 8px; }
+.assistant-pop .chat-welcome h2 { font-size:17px; }
+.assistant-pop .chat-welcome p { font-size:13px; }
+.assistant-pop .chat-input-wrap { flex:none; margin:8px 12px 12px; }
+.assistant-pop .chat-status { flex:none; }
+.assistant-pop .chat-bubble.ai { white-space:normal; line-height:1.6; }
+.assistant-pop .chat-bubble.ai p { margin:6px 0; }
+.assistant-pop .chat-bubble.ai ul,.assistant-pop .chat-bubble.ai ol { margin:6px 0 6px 20px; padding:0; }
+.assistant-pop .chat-bubble.ai code { padding:2px 5px; border-radius:5px; background:#111827; color:#E5E7EB; font-family:ui-monospace,SFMono-Regular,Consolas,monospace; font-size:.92em; }
+.assistant-pop .chat-bubble.ai pre { overflow:auto; padding:12px; border:1px solid #29334D; border-radius:9px; background:#0B1020; color:#E5E7EB; }
+.assistant-pop .chat-bubble.ai h3 { margin:8px 0; color:#FFF; font-size:15px; }
+.assistant-launcher:hover { transform:translateY(-3px); }
+@media(max-width:560px) {
+  .assistant-launcher { right:16px; bottom:16px; }
+  .assistant-pop { right:12px; bottom:82px; width:calc(100vw - 24px); height:min(560px,calc(100dvh - 98px)); }
+  .assistant-pop .chat-body { padding:16px; }
+  .assistant-pop .chat-bubble { max-width:90%; }
+}
+@keyframes chatIn { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:none; } }
+@media(max-width:560px) { .chat-body { min-height:300px; padding:22px 16px 10px; } .chat-bubble { max-width:88%; } }
+textarea {
+  width: 100%;
+  min-height: 160px;
+  border: 1px solid var(--bd);
+  border-radius: 16px;
+  padding: 14px;
+  font: inherit;
+  background: #FFF;
+  color: inherit;
+  resize: vertical;
+  margin: 10px 0 14px;
+  transition: border-color 0.2s;
+}
+textarea:focus { outline: none; border-color: var(--ac); box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.15); }
+.intake-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field.full { grid-column: 1 / -1; }
+.field label { color: var(--mu); font-size: 12px; font-weight: 700; letter-spacing: .3px; text-transform: uppercase; }
+.field input, .field select {
+  width: 100%;
+  border: 1px solid var(--bd);
+  border-radius: 11px;
+  padding: 10px 12px;
+  font: inherit;
+  color: inherit;
+  background: #FFF;
+  transition: border-color .2s, box-shadow .2s, transform .2s;
+}
+.field input:hover, .field select:hover { border-color: var(--ac); transform: translateY(-1px); }
+.field input:focus, .field select:focus { outline: none; border-color: var(--ac); box-shadow: 0 0 0 3px rgba(217,119,6,.15); }
+.intake-note { padding: 10px 12px; border-radius: 11px; background: #FFF8EE; color: var(--mu); font-size: 13px; }
+@media(max-width: 560px) { .intake-grid { grid-template-columns: 1fr; } .field.full { grid-column: auto; } }
+
+.bd { text-align: center; }
+.bd.lk { opacity: 0.4; filter: grayscale(1); }
+.bd b { font-size: 36px; display: block; margin-bottom: 4px; }
+
+.wk { display: flex; gap: 10px; align-items: flex-end; height: 130px; margin-top: 10px; }
+.wk div { flex: 1; text-align: center; font-size: 12px; color: var(--mu); }
+.wk i { display: block; background: var(--ac); border-radius: 6px 6px 0 0; min-height: 4px; margin-bottom: 6px; transition: height 0.3s; }
+
+.st { font-size: 32px; font-weight: 800; color: var(--tx); }
+.lbl { font-size: 12px; font-weight: 700; letter-spacing: 0.5px; color: var(--mu); text-transform: uppercase; margin: 16px 0 8px; }
+
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1C1917;
+  color: #F5F5F4;
+  padding: 12px 24px;
+  border-radius: 99px;
+  font-weight: 600;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  z-index: 60;
+}
+</style>
+<link rel="stylesheet" href="study-ui.css">
+<link rel="stylesheet" href="guru-theme.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body>
+<div id="app"></div>
+<div id="modal"></div>
+<div id="assistant-root"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js"></script>
+<script src="learning-state.js"></script>
+<script>
+const $ = s => document.querySelector(s);
+const LEGACY_K = 'guruagent_v5';
+let K = null;
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+const fresh = () => ({
+  p: null, tasks: [], res: [], qs: [], ans: {}, act: {}, log: [], badges: [], n: 0,
+  chat: { messages: [] },
+  ui: { sb: 1, hide: 0 },
+  streak: { cur: 0, best: 0, last: 0, day: '' }
+});
+
+let S = fresh();
+let assistantOpen = false;
+let assistantPending = false;
+
+const save = () => {
+  try {
+    if (!K) return;
+    if (S.p?.preview) localStorage.removeItem(K);
+    else localStorage.setItem(K, JSON.stringify(S));
+  } catch(e){}
+};
+const language = window.GuruLearning?.inferLanguage(prompt) || 'en';
+const today = () => new Date().toLocaleDateString('en-CA');
+const done = () => S.tasks.filter(t => t.done).length;
+const pct = () => S.tasks.length ? Math.round(done() * 100 / S.tasks.length) : 0;
+const domainKey = () => {
+  const text = [S.p?.stream, S.p?.education, S.p?.syllabus, S.p?.goal].join(' ').toLowerCase();
+  if (/math|mathematics|algebra|geometry|calculus/.test(text)) return 'math';
+  if (/account|finance|commerce|tally|audit|tax|economics/.test(text)) return 'accounting';
+  if (/rural|agri|farm|village|horticulture|dairy|fisher/.test(text)) return 'rural';
+  if (/computer|technical|bca|b\.?tech|coding|software|\bit\b|information technology|engineering|developer|science/.test(text)) return 'tech';
+  return 'general';
+};
+
+const domainInfo = () => ({
+  math: { label: 'MATHEMATICS COMMAND CENTER', title: 'Make every problem solvable', sub: 'Build confidence with focused concepts, worked examples and daily problem practice.', icon: '📐' },
+  tech: { label: 'TECH COMMAND CENTER', title: 'Build your technical edge', sub: 'Coding practice, system thinking and project progress in one place.', icon: '💻' },
+  accounting: { label: 'FINANCE COMMAND CENTER', title: 'Keep your numbers in control', sub: 'Practice accounting concepts and use quick finance tools while you learn.', icon: '📈' },
+  rural: { label: 'FIELD LEARNING CENTER', title: 'Learn for real-world impact', sub: 'Subject practice, field planning and practical knowledge for your path.', icon: '🌱' },
+  general: { label: 'LEARNING COMMAND CENTER', title: 'Make steady progress', sub: 'Your personalized learning plan, resources and practice in one place.', icon: '' }
+}[domainKey()]);
+
+const log = m => {
+  S.log.unshift({ t: Date.now(), m });
+  S.log.length = Math.min(S.log.length, 30);
+};
+
+function toast(m) {
+  const e = document.createElement('div');
+  e.className = 'toast';
+  e.textContent = m;
+  document.body.appendChild(e);
+  setTimeout(() => e.remove(), 2600);
+}
+
+function calculateProfit() {
+  const revenue = Number($('#revenue')?.value || 0);
+  const cost = Number($('#cost')?.value || 0);
+  const result = $('#calc-result');
+  if (result) result.textContent = 'Profit: ₹' + (revenue - cost).toLocaleString('en-IN');
+}
+
+function domainTools() {
+  const key = domainKey();
+  if (key === 'math') return `<div class="domain-tools"><div class="domain-tool"><h3>📐 Formula Focus</h3><p>Review the formulas and methods in your current syllabus.</p><a class="section-action" href="#/resources">Open math resources →</a></div><div class="domain-tool"><h3>✏️ Problem Practice</h3><p>Work through questions selected for ${esc(S.p.stream || 'Mathematics')}.</p><a class="section-action" href="#/practice">Start problem practice →</a></div><div class="domain-tool"><h3>🎯 Today's Topics</h3><p>${esc(S.p.syllabus || S.p.goal || 'Your personalized mathematics plan')}</p><a class="section-action" href="#/tasks">View today's tasks →</a></div></div>`;
+  if (key === 'tech') return `<div class="domain-tools"><div class="domain-tool"><h3>⌘ Code Lab</h3><p>Jump into technical practice and solve your next question.</p><a class="section-action" href="#/practice">Open coding practice →</a></div><div class="domain-tool"><h3>🧩 Project Sprint</h3><p>Turn your syllabus topics into small portfolio projects.</p><a class="section-action" href="#/tasks">View build tasks →</a></div><div class="domain-tool"><h3>⚡ Stack Focus</h3><p>${esc((S.p.skills || []).join(' · ') || 'Programming fundamentals')}</p><a class="section-action" href="#/resources">Explore tech resources →</a></div></div>`;
+  if (key === 'accounting') return `<div class="domain-tools"><div class="domain-tool"><h3>🧮 Profit Calculator</h3><p>Quickly calculate revenue minus cost.</p><div class="tool-row"><input id="revenue" type="number" placeholder="Revenue"><input id="cost" type="number" placeholder="Cost"></div><button class="section-action" data-act="calculate">Calculate <span id="calc-result">Profit</span></button></div><div class="domain-tool"><h3>📚 Ledger Practice</h3><p>Revise journal entries, balance sheet and taxation.</p><a class="section-action" href="#/practice">Start finance quiz →</a></div><div class="domain-tool"><h3>💼 Finance Resources</h3><p>Keep your commerce syllabus organized and exam-ready.</p><a class="section-action" href="#/resources">Open accounting library →</a></div></div>`;
+  if (key === 'rural') return `<div class="domain-tools"><div class="domain-tool"><h3>🌾 Field Planner</h3><p>Organize practical topics, seasons and field notes.</p><a class="section-action" href="#/tasks">Open field plan →</a></div><div class="domain-tool"><h3>☀️ Practical Learning</h3><p>Focus on applied concepts from your syllabus.</p><a class="section-action" href="#/resources">View practical guides →</a></div><div class="domain-tool"><h3>📝 Revision Check</h3><p>Test your understanding with short topic quizzes.</p><a class="section-action" href="#/practice">Take revision quiz →</a></div></div>`;
+  return `<div class="domain-tools"><div class="domain-tool"><h3>🎯 Goal Focus</h3><p>Keep your personalized goal visible and actionable.</p><a class="section-action" href="#/tasks">Open my plan →</a></div><div class="domain-tool"><h3>📖 Study Library</h3><p>Review the resources generated from your profile.</p><a class="section-action" href="#/resources">Browse library →</a></div><div class="domain-tool"><h3>🧠 Practice Check</h3><p>Build confidence with a quick knowledge drill.</p><a class="section-action" href="#/practice">Start practice →</a></div></div>`;
+}
+
+const B = [
+  ['first', '🌱', 'First Step', 'Complete your first task', () => done() > 0],
+  ['s3', '🔥', '3-Day Streak', 'Reach a 3-day streak', () => S.streak.best >= 3],
+  ['s7', '🛡️', 'Streak Saver', 'Reach a 7-day streak', () => S.streak.best >= 7],
+  ['q5', '🧠', 'Quiz Starter', 'Answer 5 questions', () => Object.keys(S.ans).length >= 5],
+  ['half', '⭐', 'Halfway There', 'Reach 50% progress', () => pct() >= 50],
+  ['all', '🏆', 'Goal Crusher', 'Finish every task', () => S.tasks.length > 0 && pct() === 100]
+];
+
+function chk() {
+  B.forEach(b => {
+    if (!S.badges.includes(b[0]) && b[4]()) {
+      S.badges.push(b[0]);
+      log('Badge unlocked: ' + b[2]);
+      setTimeout(() => toast('🏅 New badge: ' + b[2]), 500);
+    }
+  });
+}
+
+function fin(t) {
+  t.done = 1;
+  log('Completed: ' + t.title);
+  toast('✓ Task completed automatically!');
+}
+
+function ev(type, id) {
+  const d = today();
+  const a = S.act[d] = S.act[d] || { n: 0, s: 0 };
+  a.n++;
+  if (type === 'read') {
+    const t = S.tasks.find(t => t.type === 'read' && t.res === id && !t.done);
+    if (t) fin(t);
+  } else {
+    const t = S.tasks.find(t => t.type === 'quiz' && !t.done);
+    if (t && ++t.pr >= t.target) fin(t);
+  }
+  const s = S.streak;
+  s.last = Date.now();
+  if (s.day !== d) {
+    s.day = d;
+    s.cur++;
+    s.best = Math.max(s.best, s.cur);
+  }
+  chk();
+  save();
+  render();
+}
+
+const Q = {
+  js: [['What does === check in JavaScript?', ['Value only', 'Value and type', 'Type only', 'Reference only'], 1], ['What is a closure?', ['A function remembering outer scope', 'A loop', 'A class', 'A module'], 0]],
+  react: [['Which hook manages local state?', ['useState', 'useRoute', 'useFetch', 'useStyle'], 0], ['What are props?', ['Inputs passed to a component', 'Global state', 'CSS rules', 'Routes'], 0]],
+  python: [['Which type is mutable?', ['tuple', 'str', 'list', 'int'], 2], ['What does len([1,2,3]) return?', ['2', '3', '4', 'Error'], 1]],
+  dbms: [
+    ['What does DBMS stand for?', ['Database Management System', 'Data Backup Management System', 'Database Machine System', 'Data Management Software'], 0],
+    ['Which language is commonly used to query relational databases?', ['HTML', 'SQL', 'CSS', 'XML'], 1],
+    ['Which key uniquely identifies a row?', ['Foreign key', 'Primary key', 'Nullable key', 'Duplicate key'], 1],
+    ['Which normal form removes partial dependencies?', ['1NF', '2NF', '3NF', 'BCNF'], 1],
+    ['Which property ensures a transaction is all-or-nothing?', ['Atomicity', 'Isolation', 'Durability', 'Consistency'], 0],
+    ['What does a foreign key reference?', ['A row in a related table', 'A CSS selector', 'A transaction log only', 'A query result'], 0]
+  ],
+  os: [
+    ['Which service decides which process uses the CPU next?', ['CPU scheduler', 'File manager', 'Compiler', 'Web browser'], 0],
+    ['Which CPU scheduling algorithm uses a time quantum?', ['FCFS', 'SJF', 'Round Robin', 'Priority'], 2],
+    ['Which is a necessary condition for deadlock?', ['Mutual exclusion', 'Compilation', 'Paging', 'Spooling'], 0],
+    ['What does a semaphore help coordinate?', ['Process synchronization', 'File compression', 'Disk formatting', 'Code compilation'], 0],
+    ['Which technique divides memory into fixed-size blocks?', ['Paging', 'Parsing', 'Spooling', 'Compiling'], 0],
+    ['Which data structure is commonly used to implement a FIFO ready queue?', ['Queue', 'Stack', 'Tree', 'Graph'], 0]
+  ],
+  hindi: [
+    ['गद्य साहित्य का प्रमुख स्वरूप क्या है?', ['सामान्य वाक्यों में लिखा गया साहित्य', 'छंद में बँधी कविता', 'केवल सूत्र', 'केवल संवाद'], 0],
+    ['पाठ का सार लिखते समय क्या प्रस्तुत करना चाहिए?', ['मुख्य विचार संक्षेप में', 'हर वाक्य ज्यों का त्यों', 'केवल लेखक का नाम', 'असंबंधित उदाहरण'], 0],
+    ['कविता में उपमा अलंकार पहचानने का संकेत क्या है?', ['जैसे या समान शब्द से तुलना', 'केवल संवाद', 'तिथि का उल्लेख', 'प्रश्न चिह्न'], 0],
+    ['कविता का भावार्थ लिखते समय क्या करना चाहिए?', ['कविता का आशय अपने शब्दों में बताना', 'केवल कवि का नाम लिखना', 'हर शब्द की वर्तनी बदलना', 'केवल छंद गिनना'], 0],
+    ['संज्ञा किसका बोध कराती है?', ['नाम, व्यक्ति, वस्तु या स्थान का', 'केवल क्रिया का', 'केवल विशेषता का', 'केवल संबंध का'], 0],
+    ['दो वर्णों के मेल से होने वाले परिवर्तन को क्या कहते हैं?', ['समास', 'संधि', 'कारक', 'उपसर्ग'], 1],
+    ['औपचारिक पत्र में मुख्य विषय कहाँ लिखा जाता है?', ['विषय-पंक्ति में', 'केवल हस्ताक्षर में', 'केवल पते के नीचे बिना विषय के', 'समापन के बाद'], 0],
+    ['निबंध के आरंभ में सामान्यतः क्या दिया जाता है?', ['विषय का परिचय', 'केवल निष्कर्ष', 'केवल संदर्भ सूची', 'असंबंधित संवाद'], 0]
+  ],
+  hindiEnglish: [
+    ['What is a key feature of prose?', ['It is written in ordinary sentences', 'It must follow a fixed poetic meter', 'It contains only formulas', 'It contains only dialogue'], 0],
+    ['What should a good passage summary include?', ['The main ideas in concise form', 'Every sentence copied word for word', 'Only the author’s name', 'Unrelated examples'], 0],
+    ['What is an example of a simile in poetry?', ['A comparison using words such as “like” or “as”', 'A line of dialogue', 'A date reference', 'A question mark'], 0],
+    ['What should you explain in a poem’s meaning?', ['Its central idea in your own words', 'Only the poet’s name', 'The spelling of every word', 'Only the meter'], 0],
+    ['What does a noun name?', ['A person, place, thing or idea', 'An action only', 'A quality only', 'A relationship only'], 0],
+    ['What is the joining of sounds that causes a change called in Hindi grammar?', ['Samas', 'Sandhi', 'Karaka', 'Upsarg'], 1],
+    ['Where is the main subject usually stated in a formal letter?', ['In the subject line', 'Only with the signature', 'After the closing', 'Nowhere in the letter'], 0],
+    ['What does an essay introduction usually provide?', ['An introduction to the topic', 'Only the conclusion', 'Only a list of references', 'Unrelated dialogue'], 0]
+  ],
+  english: [['Which part of speech names a person, place, or thing?', ['Noun', 'Verb', 'Adverb', 'Conjunction'], 0], ['Which tense describes an action happening now?', ['Simple past', 'Present continuous', 'Past perfect', 'Future perfect'], 1], ['What is the central idea of a passage called?', ['Theme', 'Rhyme', 'Prefix', 'Tense'], 0]],
+  dsa: [['Time complexity of binary search?', ['O(n)', 'O(log n)', 'O(n²)', 'O(1)'], 1], ['Which structure is LIFO?', ['Queue', 'Stack', 'Heap', 'Graph'], 1]],
+  node: [['Node.js runs JavaScript on…', ['The server', 'Only browser', 'The GPU', 'A database'], 0], ['Which command installs a package?', ['npm install', 'node get', 'npm build', 'pkg add'], 0]],
+  html: [['Which tag defines main page heading?', ['<h1>', '<head>', '<title>', '<p>'], 0], ['Flexbox is mainly for…', ['1-D layout', 'Databases', 'Servers', 'Encryption'], 0]],
+  gen: [['Best way to retain what you learn?', ['Active practice', 'Only re-reading', 'Skipping revision', 'Cramming once'], 0], ['A good study habit is…', ['Small daily sessions', 'One marathon a month', 'No breaks ever', 'Random topics'], 0]]
+};
+
+function local(data) {
+  const t = [data.name, data.education, data.stream, data.year, data.syllabus, data.goal, data.weak, data.extra].filter(Boolean).join(' ');
+  const T = { js: ['JavaScript', /javascript|\bjs\b/i], react: ['React', /react/i], python: ['Python', /python/i], dbms: ['DBMS', /\bdbms\b|database|sql/i], os: ['Operating Systems', /operating system|\bos\b/i], hindi: ['Hindi', /\bhindi\b|हिंदी/i], english: ['English', /\benglish\b/i], dsa: ['DSA', /\bdsa\b|data structure|algorithm/i], node: ['Node.js', /node|backend/i], html: ['HTML & CSS', /html|css|frontend/i] };
+  const inferredGoal = window.GuruLearning?.inferGoal(t);
+  const subject = data.stream || inferredGoal?.subject || 'General Studies';
+  const language = window.GuruLearning?.inferLanguage(data.prompt || data.goal || '') || 'en';
+  const keys = Object.keys(T).filter(x => T[x][0] === subject);
+  const k = keys.length ? keys : ['gen'];
+  if (!k.length) k = ['gen'];
+  const nm = x => x === 'gen' ? 'Core Skills' : T[x][0];
+  const resources = [], tasks = [], questions = [];
+  const questionsForTopic = (key, topic) => {
+    const list = key === 'hindi' && language === 'en'
+      ? Q.hindiEnglish
+      : Q[key] || Q.gen;
+    const title = `${topic.title} ${topic.quizTopic}`.toLocaleLowerCase();
+    const groups = {
+      hindi: [/गद्य|prose|लेखक|passage|author/, /काव्य|कविता|poetry|अलंकार|rasa|poetic device/, /व्याकरण|grammar|संधि|समास|sentence structure/, /लेखन|पत्र|निबंध|writing|letter|essay/],
+      dbms: [/fundamental|schema|model/, /sql|query|join/, /key|constraint/, /normaliz|functional dependenc/, /transaction|acid/, /er |relational design/],
+      os: [/process state|operating-system|service/, /schedul|cpu/, /synchroniz|semaphore/, /deadlock/, /memory|paging/, /file system|disk/]
+    };
+    const subjectGroups = groups[key];
+    if (!subjectGroups) return list;
+    const groupIndex = subjectGroups.findIndex(pattern => pattern.test(title));
+    if (groupIndex < 0) return list;
+    if (key === 'hindi') {
+      return list.filter((_, index) => index >= groupIndex * 2 && index < groupIndex * 2 + 2);
+    }
+    return list.filter((_, index) => index % subjectGroups.length === groupIndex);
+  };
+
+  if (window.GuruLearning) {
+    const studyPlan = window.GuruLearning.buildPlan({ ...data, subject });
+    studyPlan.prompt = data.prompt || data.goal || '';
+    const fallbackQuestions = Q[k[0]] || Q.gen;
+    studyPlan.topics.forEach(topic => {
+      const topicQuestions = questionsForTopic(k[0], topic);
+      const notes = language === 'hi'
+        ? [
+          `${topic.title} के मुख्य विचारों को पढ़ें।`,
+          `${topic.practiceMinutes} मिनट इस विषय के प्रश्नों के उत्तर दें।`,
+          `${topic.revisionMinutes} मिनट बिना नोट्स देखे याद करें और दोहराएँ।`
+        ]
+        : [
+          `Learn the key ideas in ${topic.title}.`,
+          `Spend ${topic.practiceMinutes} minutes answering questions about this topic.`,
+          `Use ${topic.revisionMinutes} minutes for closed-book recall and review.`
+        ];
+      resources.push({
+        title: language === 'hi' ? `Din ${topic.day}: ${topic.title}` : `Day ${topic.day}: ${topic.title}`,
+        desc: language === 'hi'
+          ? `${subject} के लिए केंद्रित अध्ययन सत्र: ${topic.learnMinutes} मिनट पढ़ें, अभ्यास करें और फिर दोहराएँ।`
+          : `A focused ${subject} study block: learn for ${topic.learnMinutes} minutes, practice, then review.`,
+        tag: language === 'hi' ? `Din ${topic.day}` : `Day ${topic.day}`,
+        notes
+      });
+      tasks.push({
+        title: language === 'hi'
+          ? `दिन ${topic.day}: ${topic.title} पढ़ें (${topic.learnMinutes} मिनट)`
+          : `Day ${topic.day}: Study ${topic.title} (${topic.learnMinutes} min)`,
+        type: 'read',
+        res: resources.length - 1
+      });
+      tasks.push({
+        title: language === 'hi'
+          ? `दिन ${topic.day}: ${topic.title} का अभ्यास (${topic.practiceMinutes} मिनट)`
+          : `Day ${topic.day}: Practice ${topic.title} (${topic.practiceMinutes} min)`,
+        type: 'quiz',
+        target: Math.min(5, topicQuestions.length || fallbackQuestions.length),
+        topicId: topic.topicId
+      });
+      (topicQuestions.length ? topicQuestions : fallbackQuestions).forEach(question => {
+        questions.push({ q: question[0], opts: question[1], a: question[2], topic: topic.quizTopic, topicId: topic.topicId });
+      });
+    });
+    return {
+      ...data,
+      stream: subject,
+      language,
+      daily: `${studyPlan.dailyMinutes} minutes/day`,
+      duration: `${studyPlan.daysUntilExam} days`,
+      skills: [subject],
+      weak: data.weak ? [data.weak] : [],
+      tasks,
+      resources,
+      questions,
+      studyPlan
+    };
+  }
+
+  k.forEach(x => {
+    const n = nm(x);
+    resources.push(
+      { title: n + ' Fundamentals', desc: 'Core concepts of ' + n + ', step by step.', tag: 'Guide', notes: ['Start with core ideas.', 'Type out small examples.', 'Test your understanding.'] },
+      { title: n + ' in Practice', desc: 'Hands-on exercises to lock in ' + n + '.', tag: 'Practice', notes: ['Pick a mini-project.', 'Break into 3 small steps.', 'Revisit mistakes.'] }
+    );
+    tasks.push(
+      { title: 'Read: ' + n + ' Fundamentals', type: 'read', res: resources.length - 2 },
+      { title: 'Read: ' + n + ' in Practice', type: 'read', res: resources.length - 1 }
+    );
+    Q[x].forEach(q => questions.push({ q: q[0], opts: q[1], a: q[2] }));
+  });
+  if (data.syllabus) {
+    data.syllabus.split(/[,;\n]+/).map(x => x.trim()).filter(x => x.length > 2).slice(0, 5).forEach(subject => {
+      resources.push({ title: subject + ' Study Guide', desc: 'A focused study path for ' + subject + ' based on your syllabus.', tag: 'Subject', notes: ['Read the chapter summary.', 'Practice important questions.', 'Revise before your next test.'] });
+      tasks.push({ title: 'Read: ' + subject + ' Study Guide', type: 'read', res: resources.length - 1 });
+    });
+  }
+  if (data.syllabus) {
+    resources.push({ title: 'Your Syllabus Roadmap', desc: 'A personalized sequence built from your syllabus: ' + data.syllabus, tag: 'Your syllabus', notes: ['Start with the first unit.', 'Make short notes after each topic.', 'Revise weak areas with practice.'] });
+    tasks.unshift({ title: 'Review: Your syllabus roadmap', type: 'read', res: resources.length - 1 });
+  }
+  tasks.push({ title: 'Answer 3 practice questions', type: 'quiz', target: 3 }, { title: 'Answer 3 more practice questions', type: 'quiz', target: 3 });
+  return { name: data.name, education: data.education, stream: data.stream, year: data.year, syllabus: data.syllabus, goal: data.goal, level: data.level, skills: k.map(nm), weak: data.weak ? [data.weak] : [], daily: /min/i.test(data.daily || '') ? `${data.daily}/day` : data.daily + ' hrs/day', duration: data.duration, tasks, resources, questions };
+}
+
+function apply(o, text, upd) {
+  if (!upd) { S.tasks = []; S.res = []; S.qs = []; S.ans = {}; S.log = []; S.p = {}; }
+  else { S.tasks = []; S.res = []; S.qs = []; S.ans = {}; }
+  const p = S.p;
+  p.text = (upd && p.text ? p.text + '\n\n' : '') + text;
+  ['name','education','stream','year','syllabus','goal','prompt','level','daily','duration','language'].forEach(k => { if (o[k]) p[k] = o[k]; });
+  ['skills','weak'].forEach(k => {
+    if (!Array.isArray(o[k])) return;
+    p[k] = upd ? [...new Set(o[k])] : [...new Set([...(p[k] || []), ...o[k]])];
+  });
+  const ids = o.resources.map(r => {
+    const id = 'r' + (++S.n);
+    S.res.push({ id, title: String(r.title), desc: String(r.desc || ''), tag: r.tag || '', notes: Array.isArray(r.notes) ? r.notes : [] });
+    return id;
+  });
+  o.tasks.forEach((t, i) => {
+    if (S.tasks.some(x => x.title === t.title)) return;
+    const rd = t.type !== 'quiz' && ids.length;
+    S.tasks.push({ title: String(t.title), type: rd ? 'read' : 'quiz', res: rd ? ids[t.res] || ids[i % ids.length] : 0, target: t.target || 3, pr: 0, done: 0, topicId: t.topicId || '' });
+  });
+  o.questions.filter(q => q && Array.isArray(q.opts) && q.opts.length > 1 && q.opts[q.a] != null).forEach(q => S.qs.push({ q: String(q.q), o: q.opts, a: q.a }));
+  if (!S.qs.length) Q.gen.forEach(q => S.qs.push({ q: q[0], o: q[1], a: q[2] }));
+  if (o.studyPlan && window.GuruLearning) {
+    const plan = o.studyPlan;
+    const topics = plan.topics || [];
+    plan.profile = {
+      name: o.name || "",
+      education: o.education || "",
+      stream: o.stream || plan.subject,
+      year: o.year || "",
+      syllabus: o.syllabus || "",
+      goal: o.goal || "",
+      prompt: o.prompt || o.goal || "",
+      language: o.language || window.GuruLearning?.inferLanguage(o.prompt || o.goal || "") || "en",
+      weak: Array.isArray(o.weak) ? o.weak : (o.weak ? [o.weak] : []),
+      level: o.level || "",
+      daily: o.daily || "",
+      duration: o.duration || ""
+    };
+    plan.questions = (o.questions || []).map((question, index) => {
+      const requestedTopic = String(question.topic || "").trim().toLocaleLowerCase();
+      const matchedTopic = topics.find(topic =>
+        (question.topicId && topic.topicId === question.topicId) ||
+        requestedTopic &&
+        (topic.title.toLocaleLowerCase() === requestedTopic ||
+          topic.title.toLocaleLowerCase().includes(requestedTopic) ||
+          requestedTopic.includes(topic.title.toLocaleLowerCase()))
+      ) || topics[index % Math.max(1, topics.length)];
+      return {
+        question: question.q,
+        options: question.opts,
+        answer: question.a,
+        topic: matchedTopic?.quizTopic || question.topic || topics[0]?.quizTopic || plan.subject,
+        topicId: matchedTopic?.topicId || topics[0]?.topicId || ""
+      };
+    });
+    S.studyPlan = plan;
+    window.GuruLearning.savePlan({
+      ...plan
+    });
+  }
+}
+
+function parseGeneratedDashboard(reply, input) {
+  const cleaned = String(reply || '').trim()
+    .replace(/^```(?:json)?\s*/i, '')
+    .replace(/\s*```$/, '');
+  const start = cleaned.indexOf('{');
+  const end = cleaned.lastIndexOf('}');
+  if (start < 0 || end <= start) throw new Error('The AI did not return dashboard data. Please try again.');
+
+  let generated;
+  try {
+    generated = JSON.parse(cleaned.slice(start, end + 1));
+  } catch {
+    throw new Error('The AI returned invalid dashboard data. Please try again.');
+  }
+  if (!generated || typeof generated !== 'object' || Array.isArray(generated)) {
+    throw new Error('The AI returned invalid dashboard data. Please try again.');
+  }
+
+  const text = value => typeof value === 'string' ? value.trim() : '';
+  const resources = Array.isArray(generated.resources) ? generated.resources.slice(0, 20).map(resource => ({
+    title: text(resource?.title),
+    desc: text(resource?.desc),
+    tag: text(resource?.tag) || 'Guide',
+    notes: Array.isArray(resource?.notes) ? resource.notes.filter(note => typeof note === 'string').slice(0, 8) : []
+  })) : [];
+  const tasks = Array.isArray(generated.tasks) ? generated.tasks.slice(0, 30).map(task => ({
+    title: text(task?.title),
+    type: task?.type === 'quiz' ? 'quiz' : task?.type === 'read' ? 'read' : '',
+    res: Number.isInteger(task?.res) ? task.res : 0,
+    target: Number.isInteger(task?.target) ? Math.max(1, Math.min(task.target, 20)) : 3,
+    topicId: text(task?.topicId)
+  })) : [];
+  const questions = Array.isArray(generated.questions) ? generated.questions.slice(0, 30).map(question => ({
+    q: text(question?.q),
+    opts: Array.isArray(question?.opts) ? question.opts.filter(option => typeof option === 'string').slice(0, 6) : [],
+    a: question?.a,
+    topic: text(question?.topic),
+    topicId: text(question?.topicId)
+  })).filter(question => question.q && question.opts.length > 1 && Number.isInteger(question.a) && question.a >= 0 && question.a < question.opts.length) : [];
+
+  if (!resources.length || !tasks.length || !questions.length ||
+      resources.some(resource => !resource.title) ||
+      tasks.some(task => !task.title || !task.type || (task.type === 'read' && (task.res < 0 || task.res >= resources.length)))) {
+    throw new Error('The AI response was missing valid tasks, resources, or practice questions. Please try again.');
+  }
+
+  const list = value => Array.isArray(value)
+    ? value.filter(item => typeof item === 'string' && item.trim()).map(item => item.trim()).slice(0, 20)
+    : [];
+  const fallbackSkills = [text(input.stream), text(input.syllabus)].filter(Boolean);
+  return {
+    name: text(generated.name) || text(input.name) || 'Learner',
+    education: text(generated.education) || text(input.education),
+    stream: text(generated.stream) || text(input.stream) || text(input.goal),
+    year: text(generated.year) || text(input.year),
+    syllabus: text(generated.syllabus) || text(input.syllabus) || text(input.goal),
+    goal: text(generated.goal) || text(input.goal),
+    level: text(generated.level) || text(input.level),
+    daily: text(generated.daily) || text(input.daily),
+    duration: text(generated.duration) || text(input.duration),
+    skills: list(generated.skills).length ? list(generated.skills) : fallbackSkills,
+    weak: list(generated.weak).length ? list(generated.weak) : (text(input.weak) ? [text(input.weak)] : []),
+    resources,
+    tasks,
+    questions
+  };
+}
+
+async function requestGuruAgent(messages) {
+  const isLocalPreview = location.protocol === 'file:' || ['localhost', '127.0.0.1', '::1'].includes(location.hostname);
+  const response = await fetch(isLocalPreview ? 'https://guruagent-fixed.vercel.app/api/chat' : '/api/chat', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ messages })
+  });
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(payload.error || `AI service returned HTTP ${response.status}`);
+  if (typeof payload.reply !== 'string' || !payload.reply.trim()) throw new Error('AI service returned an empty response.');
+  return payload.reply.trim();
+}
+
+async function generateDashboard(input) {
+  const system = [
+    'You are GuruAgent, a personal learning assistant that creates dashboard data from a learner profile.',
+    'Return only one valid JSON object. Do not include Markdown, HTML, commentary, or code fences.',
+    'Personalize every task, resource, and practice question for the learner’s stream, syllabus, goal, level, weak topics, available study time, and deadline. Give each practice question a topic matching one of the learner’s syllabus or weak topics.',
+    'Write all generated dashboard content in English by default. If the learner’s goal is written in Hindi or Hinglish, write all generated explanations, resources, tasks, and practice questions in Hindi. The subject name alone does not determine the response language.',
+    'Never invent learner details. Use the supplied profile when returning profile fields.',
+    'Keep the existing dashboard UI unchanged: return content/data only, never UI markup or styles.',
+    'Use this exact JSON shape: {"name":"string","education":"string","stream":"string","year":"string","syllabus":"string","goal":"string","level":"string","daily":"string","duration":"string","skills":["string"],"weak":["string"],"resources":[{"title":"string","desc":"string","tag":"string","notes":["string"]}],"tasks":[{"title":"string","type":"read or quiz","res":0,"target":3}],"questions":[{"q":"string","opts":["string","string"],"a":0,"topic":"string"}]}',
+    'Create 3 to 8 useful resources, 5 to 12 actionable tasks, and at least 3 multiple-choice questions with exactly one correct answer. For read tasks, res must be a zero-based index into resources. For quiz tasks use type "quiz" and a target count.',
+    'Learner profile JSON: ' + JSON.stringify(input)
+  ].join('\n');
+  const reply = await requestGuruAgent([
+    { role: 'system', content: system },
+    { role: 'user', content: 'Create my personalized learning dashboard using the profile above.' }
+  ]);
+  return parseGeneratedDashboard(reply, input);
+}
+
+function syncPlanTasks(plan) {
+  const topics = new Map((plan?.topics || []).map(topic => [topic.topicId, topic]));
+  let changed = false;
+  S.tasks.forEach(task => {
+    if (!task.topicId || !topics.has(task.topicId)) return;
+    const topic = topics.get(task.topicId);
+    const progress = Math.min(task.target, Number(topic.attempts || 0));
+    const completed = Boolean(topic.completed);
+    if (task.pr !== progress || task.done !== Number(completed)) changed = true;
+    task.pr = progress;
+    task.done = Number(completed);
+  });
+  if (changed) save();
+}
+
+function chatContext() {
+  const p = S.p || {};
+  const answered = Object.entries(S.ans || {}).map(([index, answer]) => ({
+    question: S.qs[Number(index)]?.q || '',
+    selectedAnswer: S.qs[Number(index)]?.o?.[answer] || '',
+    correctAnswer: S.qs[Number(index)]?.o?.[S.qs[Number(index)]?.a] || '',
+    correct: S.qs[Number(index)]?.a === answer
+  }));
+  return {
+    learner: {
+      name: p.name || '', education: p.education || '', stream: p.stream || '',
+      year: p.year || '', syllabus: p.syllabus || '', goal: p.goal || '',
+      level: p.level || '', skills: p.skills || [], weakTopics: p.weak || [],
+      dailyStudyTime: p.daily || '', targetDuration: p.duration || '',
+      examPlan: S.studyPlan ? {
+        subject: S.studyPlan.subject,
+        examDate: S.studyPlan.examDate,
+        topics: S.studyPlan.topics.map(topic => ({
+          day: topic.day,
+          title: topic.title,
+          completed: topic.completed,
+          accuracy: topic.accuracy
+        }))
+      } : null
+    },
+    progress: {
+      totalTasks: S.tasks.length, completedTasks: done(), percent: pct(),
+      pendingTasks: S.tasks.filter(t => !t.done).slice(0, 20).map(t => t.title),
+      completedTaskTitles: S.tasks.filter(t => t.done).slice(-20).map(t => t.title),
+      currentStreak: S.streak.cur, bestStreak: S.streak.best,
+      questionsAnswered: answered.length,
+      correctAnswers: answered.filter(item => item.correct).length,
+      practiceReport: window.GuruLearning?.summarizeHistory() || null,
+      recentPractice: (window.GuruLearning?.getHistory() || []).slice(0, 5).map(entry => ({
+        subject: entry.subject,
+        topic: entry.topic,
+        score: entry.score,
+        accuracy: entry.accuracy
+      })),
+      resources: S.res.slice(0, 20).map(item => item.title),
+      recentActivity: S.log.slice(0, 10).map(item => item.m)
+    }
+  };
+}
+
+function formatChatReply(raw) {
+  const parts = String(raw || '').replace(/\r/g, '').split(/```([\w#+.-]*)\n?([\s\S]*?)```/g);
+  let html = '';
+  for (let index = 0; index < parts.length; index += 3) {
+    const prose = parts[index] || '';
+    let list = '';
+    for (const line of prose.split('\n')) {
+      const text = line.trim();
+      if (!text) { if (list) { html += `</${list}>`; list = ''; } continue; }
+      const heading = text.match(/^#{1,3}\s+(.+)$/);
+      if (heading) { if (list) { html += `</${list}>`; list = ''; } html += `<h3>${esc(heading[1])}</h3>`; continue; }
+      const item = text.match(/^[-*]\s+(.+)$/) || text.match(/^\d+[.)]\s+(.+)$/);
+      if (item) {
+        const tag = /^\d+[.)]/.test(text) ? 'ol' : 'ul';
+        if (list !== tag) { if (list) html += `</${list}>`; html += `<${tag}>`; list = tag; }
+        html += `<li>${esc(item[1]).replace(/`([^`]+)`/g, '<code>$1</code>').replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')}</li>`;
+        continue;
+      }
+      if (list) { html += `</${list}>`; list = ''; }
+      html += `<p>${esc(text).replace(/`([^`]+)`/g, '<code>$1</code>').replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')}</p>`;
+    }
+    if (list) html += `</${list}>`;
+    if (index + 1 < parts.length) html += `<pre><code>${esc(parts[index + 2] || '')}</code></pre>`;
+  }
+  return html || '<p>No response received.</p>';
+}
+
+function renderAssistant() {
+  const root = $('#assistant-root');
+  if (!root || !S.p) { if (root) root.innerHTML = ''; return; }
+  const messages = (S.chat?.messages || []).map(message => `<div class="chat-msg ${message.role === 'user' ? 'user' : 'ai'}"><div class="chat-bubble ${message.role === 'user' ? 'user' : 'ai'}">${message.role === 'user' ? esc(message.content) : formatChatReply(message.content)}</div></div>`).join('');
+  root.innerHTML = `${assistantOpen ? `<section class="assistant-pop" role="dialog" aria-label="GuruAgent chat">
+    <div class="chat-head"><img class="chat-avatar" src="GuruAgentLogo.jpg" alt=""><div><strong>GuruAgent</strong><small>Personal learning assistant</small></div><button class="chat-close" data-act="assistant-close" type="button" aria-label="Close chat">×</button></div>
+    <div class="chat-body" id="assistant-body">${messages || '<div class="chat-welcome"><h2>What can I help you with?</h2><p>Ask about your study plan, progress, a topic, or anything you are learning.</p></div>'}${assistantPending ? '<div class="chat-msg ai"><div class="chat-bubble ai chat-typing">✦ Thinking…</div></div>' : ''}</div>
+    <div class="chat-status" aria-live="polite">${assistantPending ? 'GuruAgent is thinking…' : ''}</div>
+    <form class="chat-input-wrap" id="assistant-form"><textarea class="chat-input" id="assistant-input" rows="1" maxlength="4000" placeholder="Ask anything" aria-label="Message GuruAgent" ${assistantPending ? 'disabled' : ''}></textarea><button class="chat-icon chat-send" type="submit" title="Send" aria-label="Send message" ${assistantPending ? 'disabled' : ''}>➤</button></form>
+  </section>` : ''}<button class="assistant-launcher" data-act="assistant-toggle" type="button" aria-label="${assistantOpen ? 'Close' : 'Open'} GuruAgent assistant" title="Ask GuruAgent"><img src="GuruAgentLogo.jpg?v=202609271805" alt="" aria-hidden="true"></button>`;
+  const body = $('#assistant-body');
+  if (body) body.scrollTop = body.scrollHeight;
+  const form = $('#assistant-form');
+  if (!form) return;
+  form.onsubmit = async event => {
+    event.preventDefault();
+    const input = $('#assistant-input');
+    const text = input?.value.trim();
+    if (!text || assistantPending) return;
+    S.chat.messages.push({ role: 'user', content: text });
+    S.chat.messages = S.chat.messages.slice(-24);
+    assistantPending = true;
+    save();
+    renderAssistant();
+    try {
+      const profile = chatContext();
+      const system = [
+        'You are GuruAgent, a capable general-purpose AI tutor and personal learning assistant.',
+        'Answer directly and helpfully in English by default. Reply in Hindi only when the latest user message is written in Hindi or Hinglish. The subject name alone does not determine the response language. Explain concepts, solve educational questions step by step, and give correct runnable code when relevant.',
+        'Use the learner profile and progress below to personalize answers and accurately answer questions about their dashboard. Never invent profile or progress details. If a detail is unavailable, say so clearly.',
+        'Remember the recent conversation and resolve follow-ups from context. Do not claim to browse the web, see images, or access files.',
+        'Use clear Markdown and keep simple answers concise.',
+        'Reply language: ' + ((window.GuruLearning?.inferLanguage(S.chat.messages.filter(message => message.role === 'user').slice(-1)[0]?.content || '') || 'en') === 'hi' ? 'Hindi' : 'English'),
+        'Dashboard context: ' + JSON.stringify(profile)
+      ].join('\n');
+      const reply = await requestGuruAgent([{ role: 'system', content: system }, ...S.chat.messages.slice(-18)]);
+      S.chat.messages.push({ role: 'assistant', content: reply });
+    } catch (error) {
+      console.error('GuruAgent chat failed.', error);
+      const message = String(error?.message || 'AI service is temporarily unavailable.');
+      S.chat.messages.push({ role: 'assistant', content: `I could not reach the AI service. ${message}` });
+    } finally {
+      S.chat.messages = S.chat.messages.slice(-24);
+      assistantPending = false;
+      save();
+      renderAssistant();
+    }
+  };
+  $('#assistant-input').onkeydown = event => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      form.requestSubmit();
+    }
+  };
+}
+
+function planThinkingVisual() {
+  return '<div class="plan-thinking-visual" role="img" aria-label="A chalkboard with the word PLAN written in chalk"><div class="plan-board-sketch" aria-hidden="true"><span class="plan-board-word">PLAN</span><span class="plan-board-chalk"></span></div></div>';
+}
+
+function parsePlanPrompt(prompt) {
+  const p = S.p || {};
+  const inferred = window.GuruLearning?.inferGoal(prompt) || {
+    subject: 'General Studies', daysUntilExam: 7, dailyMinutes: 60,
+    hasDuration: false, hasDailyTime: false
+  };
+  const explicitSubject = prompt.match(/(?:subject|stream|paper|exam|pariksha)\s*(?:is|:|-|ka|ki|ke)?\s*([\p{L}][\p{L}\s-]{1,30}?)(?=\s+(?:paper|exam|pariksha|in|is|hai|kal|parso|tomorrow|in\s+\d)|[,.;!?]|$)/iu);
+  const subject = inferred.subject !== 'General Studies'
+    ? inferred.subject
+    : explicitSubject?.[1]?.trim() || p.stream || 'General Studies';
+  const weakMatch = prompt.match(/(?:weak|kamzor|difficult|hard|mushkil)\s+(?:in|at|on|mein|me|area|topic)?\s*([^,.;!?]+)/i);
+  const weakAfter = weakMatch?.[1]?.trim() || '';
+  const weakBeforeMatch = prompt.match(/(?:^|[,;])\s*([^,;.!?]{2,50}?)\s+(?:is\s+)?(?:weak|kamzor|difficult|hard|mushkil)\b/i);
+  const weakBefore = weakBeforeMatch?.[1]?.replace(/^(?:i am|i'm|mera|meri|mujhe|topic|area)\s+/i, '').trim() || '';
+  const weak = /^(?:hai|hoon|hun|h|area|topic)$/i.test(weakAfter) ? weakBefore : weakAfter || weakBefore;
+  const syllabusMatch = prompt.match(/(?:syllabus|topics?|chapters?|units?)\s*[:=-]\s*([^.;!?]+)/i);
+  const duration = inferred.hasDuration ? inferred.daysUntilExam : 7;
+  const dailyMinutes = inferred.hasDailyTime ? inferred.dailyMinutes : 60;
+  const nameMatch = prompt.match(/(?:my name is|mera naam|my name:)\s*([\p{L}][\p{L}\s'-]{1,40})/iu);
+  const goal = prompt.trim();
+  const data = {
+    name: p.name || nameMatch?.[1]?.trim() || 'Learner',
+    education: p.education || 'College',
+    stream: subject,
+    year: p.year || '',
+    syllabus: syllabusMatch?.[1]?.trim() || '',
+    goal,
+    prompt: goal,
+    language,
+    weak,
+    level: p.level || 'Beginner',
+    daily: `${dailyMinutes} minutes`,
+    dailyMinutes,
+    duration: `${duration} days`,
+    daysUntilExam: duration
+  };
+  return data;
+}
+
+function ask(upd) {
+  const data = {
+    ...(S.p || {})
+  };
+  const messages = [];
+  const addMessage = (who, text) => messages.push(`<div class="chat-msg ${who}"><div class="chat-bubble">${esc(text)}</div></div>`);
+  addMessage('ai', upd
+    ? 'Enter your new study goal in one message. Your dashboard, study plan, practice, and progress will update immediately.'
+    : 'Enter your subject, exam date, weak topics, and daily study time in one message. For example: My Hindi exam is the day after tomorrow, and I can study for 2 hours daily.');
+  $('#modal').innerHTML = `<div class="ov"><div class="md chat-md">
+    <div class="chat-head"><img class="chat-avatar" src="GuruAgentLogo.jpg?v=202609252351" alt=""><div><strong>GuruAgent</strong><small>Personal learning assistant</small></div><button class="chat-close" data-act="chat-close" aria-label="Close">×</button></div>
+    <div class="chat-body" id="chat-body"><div class="chat-welcome"><h2>${upd ? 'Update your study plan' : 'Tell me your exam goal'}</h2><p>One prompt is enough. No extra questions or AI wait.</p></div>${messages.join('')}</div>
+    <div class="chat-status" id="chat-status"></div>
+    <form class="chat-input-wrap" id="chat-form"><textarea class="chat-input" id="chat-input" rows="2" maxlength="2000" placeholder="My Hindi exam is the day after tomorrow, and I can study for 2 hours daily..." aria-label="Your study goal"></textarea><button class="chat-icon chat-send" type="submit" title="Create dashboard" aria-label="Create dashboard">➤</button></form>
+  </div></div>`;
+  const body = $('#chat-body');
+  const input = $('#chat-input');
+  $('#chat-form').onsubmit = e => {
+    e.preventDefault();
+    const text = input.value.trim();
+    if (!text) return;
+    addMessage('user', text);
+    input.disabled = true;
+    const submit = $('#chat-form button[type="submit"]');
+    if (submit) submit.disabled = true;
+    $('#chat-status').textContent = 'Creating your dashboard…';
+    try {
+      const profile = parsePlanPrompt(text);
+      const generated = local(profile);
+      apply(generated, text, upd);
+      S.streak.last = Date.now();
+      $('#modal').innerHTML = '';
+      location.hash = '#/dashboard';
+      chk();
+      save();
+      render();
+    } catch (error) {
+      console.error('Could not build the study plan from the prompt.', error);
+      $('#chat-status').textContent = `Could not create the dashboard. ${error.message || 'Please try another prompt.'}`;
+      input.disabled = false;
+      if (submit) submit.disabled = false;
+      input.focus();
+    }
+  };
+  input.onkeydown = e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); $('#chat-form').requestSubmit(); } };
+  input.focus();
+}
+
+let rt;
+function reader(id) {
+  const r = S.res.find(x => x.id === id);
+  if (!r) return;
+  const t = S.tasks.find(t => t.type === 'read' && t.res === id);
+  const dn = t && t.done;
+  let s = 0;
+  $('#modal').innerHTML = `<div class="ov"><div class="md"><span class="pill">${esc(r.tag || 'Guide')}</span><h2 style="margin-top:10px">${esc(r.title)}</h2><p class="mu">${esc(r.desc)}</p><ul>${r.notes.map(n => `<li>${esc(n)}</li>`).join('')}</ul><div class="bar"><i id="rb" style="width:${dn ? 100 : 0}%"></i></div><p class="mu" id="rs">${dn ? '✓ Completed' : 'Reading… progress tracked automatically'}</p><button class="btn ghost" data-act="close">Close</button></div></div>`;
+  clearInterval(rt);
+  if (dn) return;
+  rt = setInterval(() => {
+    if (document.hidden) return;
+    s++;
+    const a = S.act[today()] = S.act[today()] || { n: 0, s: 0 };
+    a.s++;
+    if ($('#rb')) $('#rb').style.width = (s * 100 / 8) + '%';
+    if (s >= 8) {
+      clearInterval(rt);
+      if ($('#rs')) $('#rs').textContent = '✓ Completed! Action plan updated.';
+      ev('read', id);
+    }
+  }, 1000);
+}
+
+const ti = t => `<div class="ti ${t.done ? 'dn' : ''}" data-go="${t.type === 'read' ? 'res:' + t.res : '#/practice'}"><span>${t.done ? '✓' : '○'}</span><span style="font-weight:600">${esc(t.title)}</span>${t.type === 'quiz' && !t.done ? `<small>${t.pr}/${t.target}</small>` : ''}</div>`;
+
+const plan = max => {
+  const P = S.tasks.filter(t => !t.done);
+  const D = S.ui.hide ? [] : S.tasks.filter(t => t.done);
+  return `<div class="lbl">Pending Tasks (Top Priority)</div>${(max ? P.slice(0, max) : P).map(ti).join('') || '<p class="mu">🎉 All tasks done!</p>'}${D.length ? '<div class="lbl">Completed Tasks (Bottom)</div>' + (max ? D.slice(0, Math.max(2, max - P.length)) : D).map(ti).join('') : ''}`;
+};
+
+const qc = i => {
+  const q = S.qs[i], a = S.ans[i];
+  return `<div style="margin:14px 0"><b>Q${i + 1}. ${esc(q.q)}</b>${q.o.map((o, j) => `<button class="opt ${a == null ? '' : j === q.a ? 'ok' : j === a ? 'no' : ''}" data-a="${i}:${j}">${esc(o)}</button>`).join('')}</div>`;
+};
+
+const rc = (r, o) => {
+  const t = S.tasks.find(t => t.type === 'read' && t.res === r.id);
+  return `<div class="card ${o ? 'k' : ''}" ${o ? `data-go="res:${r.id}"` : ''} style="margin:0"><span class="pill">${esc(r.tag || 'Guide')}</span><h3 style="margin-top:10px">${esc(r.title)}</h3><p class="mu">${esc(r.desc)}</p><b>${t && t.done ? '✓ Completed' : 'Open Resource →'}</b></div>`;
+};
+
+const bg = all => B.filter(b => all || S.badges.includes(b[0])).map(b => {
+  const u = S.badges.includes(b[0]);
+  return `<div class="card bd ${u ? '' : 'lk'}" style="margin:0"><b>${b[1]}</b><h3>${b[2]}</h3><span class="mu">${b[3]}</span></div>`;
+}).join('') || '<p class="mu">No badges unlocked yet.</p>';
+
+const V = {
+  dashboard() {
+    const h = new Date().getHours();
+    const g = h < 12 ? 'Morning' : h < 17 ? 'Afternoon' : 'Evening';
+    const n = S.p.name;
+    const d = domainInfo();
+    const practiceHistory = window.GuruLearning?.getHistory() || [];
+    const practiceSummary = window.GuruLearning?.summarizeHistory(practiceHistory) || { questions: 0, accuracy: 0, sessions: 0 };
+    const examTime = S.studyPlan ? `${S.studyPlan.daysUntilExam} day${S.studyPlan.daysUntilExam === 1 ? '' : 's'}` : S.p.duration || '7 days';
+    const studyTime = S.studyPlan ? `${S.studyPlan.dailyMinutes} minutes` : S.p.daily || '60 minutes';
+    return `
+      <section class="hero">
+        <div><p class="lbl" style="color:#FCD34D; margin:0 0 6px;">${d.icon} ${d.label}</p><h1>${d.title}</h1><p>Good ${g}${n ? ', ' + esc(n) : ''}. ${d.sub}</p></div>
+        <button class="btn" data-act="update">Refresh my plan</button>
+      </section>
+      <div class="card"><span class="lbl">YOUR STUDY GOAL</span><h2 style="margin:8px 0">${esc(S.p.goal || 'Create a personalized study goal')}</h2><p class="mu" style="margin:0">${esc(S.studyPlan?.subject || S.p.stream || 'Your subject')} · ${esc(examTime)} · ${esc(studyTime)} daily</p></div>
+      ${domainTools()}
+      <div class="metric-grid">
+        <div class="metric"><span>Tasks left</span><strong>${Math.max(0, S.tasks.length - done())}</strong></div>
+        <div class="metric"><span>Questions solved</span><strong>${practiceSummary.questions + Object.keys(S.ans).length}</strong></div>
+        <div class="metric"><span>Practice accuracy</span><strong>${practiceSummary.accuracy}%</strong></div>
+        <div class="metric"><span>Practice sessions</span><strong>${practiceSummary.sessions}</strong></div>
+        <div class="metric"><span>Study time</span><strong>${Math.round(Object.values(S.act).reduce((sum, a) => sum + a.s, 0) / 60)}m</strong></div>
+      </div>
+
+      ${practiceHistory.length ? `<div class="card"><h3>RECENT PRACTICE REPORT</h3>${practiceHistory.slice(0, 3).map(item => `<div class="ti" style="cursor:default"><span style="font-weight:600">${esc(item.name || item.subject || 'Practice')}</span><small>${Number(item.accuracy || 0)}% · ${esc(item.score || '')}</small></div>`).join('')}</div>` : ''}
+
+      <div class="card k" data-go="#/achievements" style="margin-top:16px; background: linear-gradient(135deg, #FAF8F5 0%, #E7DFD3 100%); border-color:#DDD5C7;">
+        <h3>🏆 YOUR ACHIEVEMENTS</h3>
+        <div style="display:flex; gap:36px; flex-wrap:wrap; margin: 12px 0;">
+          <div><span class="st">🔥 ${S.streak.cur}</span><div class="mu">Day Streak</div></div>
+          <div><span class="st">⭐ ${pct()}%</span><div class="mu">Completed</div></div>
+          <div><span class="st">🏅 ${S.badges.length}</span><div class="mu">Badges</div></div>
+        </div>
+        <p class="mu" style="margin:0; font-weight:600;">Track your milestones and keep your momentum going.</p>
+        <a class="section-action amber" href="#/achievements">View Achievements & Streak Badges →</a>
+      </div>
+
+      <div class="g2">
+        <div class="card">
+          <h3>ACTION PLAN</h3>
+          ${plan(6)}
+          <a class="section-action" href="#/tasks">See all tasks in detail →</a>
+        </div>
+        <div class="card k" data-go="#/progress">
+          <h3>DAILY PROGRESS</h3>
+          <div class="st" style="font-size:48px; color:var(--ac);">${pct()}%</div>
+          <div class="bar"><i style="width:${pct()}%"></i></div>
+          <p style="font-weight:600">${done()} / ${S.tasks.length} tasks completed</p>
+          <p class="mu">Your daily momentum at a glance.</p>
+          <a class="section-action" href="#/progress">View Full Detailed Progress →</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>🧠 KNOWLEDGE DRILL</h3>
+        ${S.qs.slice(0, 2).map((q, i) => qc(i)).join('')}
+        <div style="margin-top:18px; padding-top:12px; border-top:1px solid var(--bd); display:flex; justify-content:space-between; align-items:center;">
+          <span class="mu">Want to solve more questions?</span>
+          <a class="section-action amber" href="practice.html">Go to Practice Page →</a>
+        </div>
+      </div>
+
+      <div class="card k" data-go="#/resources">
+        <h3>📚 RECOMMENDED FOR YOU</h3>
+        <div class="g3" style="margin-top:12px">${S.res.slice(0, 3).map(r => rc(r, 0)).join('')}</div>
+        <a class="section-action" href="#/resources">Open full Resource Library →</a>
+      </div>
+    `;
+  },
+  progress() {
+    const tm = Math.round(Object.values(S.act).reduce((s, a) => s + a.s, 0) / 60);
+    const practiceSummary = window.GuruLearning?.summarizeHistory() || { questions: 0, accuracy: 0, sessions: 0 };
+    const days = [...Array(7)].map((_, i) => {
+      const d = new Date(Date.now() - (6 - i) * 864e5);
+      return [d.toLocaleDateString('en-CA'), d.toLocaleDateString('en', { weekday: 'short' })];
+    });
+    const cnt = d => (S.act[d] || { n: 0 }).n;
+    const mx = Math.max(1, ...days.map(d => cnt(d[0])));
+    return `
+      <h1>Progress Deep Dive</h1>
+      <div class="g3">${[['Total Tasks', S.tasks.length], ['Completed', done()], ['Pending', S.tasks.length - done()], ['Practice Questions', practiceSummary.questions], ['Practice Accuracy', `${practiceSummary.accuracy}%`], ['Practice Sessions', practiceSummary.sessions], ['Active Time', tm + ' min'], ['Current Streak', '🔥 ' + S.streak.cur], ['Best Streak', S.streak.best + ' days']].map(x => `<div class="card" style="margin:0"><div class="mu">${x[0]}</div><div class="st">${x[1]}</div></div>`).join('')}</div>
+      <div class="card" style="margin-top:20px"><h3>Overall Goal Progress: ${pct()}%</h3><div class="bar"><i style="width:${pct()}%"></i></div></div>
+      <div class="card"><h3>Weekly Activity Tracker</h3><div class="wk">${days.map(d => `<div><i style="height:${cnt(d[0]) * 95 / mx}px"></i>${d[1]}</div>`).join('')}</div></div>
+      <div class="g2"><div class="card"><h3>Completed Topics</h3>${S.tasks.filter(t => t.done).map(t => `<div class="ti" style="cursor:default">✓ ${esc(t.title)}</div>`).join('') || '<p class="mu">No completed topics yet.</p>'}</div>
+      <div class="card"><h3>Goal Details</h3><p><b>${esc(S.p.goal || '—')}</b></p><p class="mu">${esc(S.p.level || '')} ${S.p.daily ? '· ' + esc(S.p.daily) : ''} ${S.p.duration ? '· ' + esc(S.p.duration) : ''}</p><h3>Activity Log</h3>${S.log.slice(0, 8).map(l => `<div class="mu" style="font-size:12px">${new Date(l.t).toLocaleTimeString()} ·${esc(l.m)}</div>`).join('') || '<p class="mu">No logs recorded.</p>'}</div></div>
+    `;
+  },
+  tasks() { return `<h1>All Action Plan Tasks</h1><div class="card"><button class="btn ghost" data-act="hide">${S.ui.hide ? 'Show' : 'Hide'} completed tasks</button>${plan()}</div>`; },
+  practice() { return `<h1>Knowledge Drill Practice</h1><p class="mu">${Object.keys(S.ans).length} of ${S.qs.length} answered.</p><div class="card">${S.qs.map((q, i) => qc(i)).join('')}</div>`; },
+  resources() { return `<h1>Resource Library</h1><div class="g3">${S.res.map(r => rc(r, 1)).join('')}</div>`; },
+  achievements() { return `<h1>Achievements & Streaks</h1><div class="card"><h3>🔥 ${S.streak.cur}-Day Current Streak</h3><p class="mu">Best Streak: ${S.streak.best} days. Keep visiting and practicing daily to retain your streak.</p></div><div class="g3">${bg(1)}</div>`; },
+  profile() {
+    const p = S.p;
+    return `
+      <h1>User Profile</h1>
+      <div class="card">
+        <div style="display:flex; gap:16px; align-items:center;">
+          <span class="pill dark" style="font-size:24px; padding:10px 18px;">${esc((p.name || 'G')[0].toUpperCase())}</span>
+          <div><h2 style="margin:0">${esc(p.name || 'Learner')}</h2><span class="mu">${esc(p.goal || '')}</span></div>
+        </div>
+        <p style="margin-top:14px"><b>Education:</b> ${esc(p.education || '—')} | <b>Stream:</b> ${esc(p.stream || '—')} | <b>Year:</b> ${esc(p.year || '—')}</p>
+        <p><b>Level:</b> ${esc(p.level || '—')} | <b>Daily Time:</b> ${esc(p.daily || '—')} | <b>Duration:</b> ${esc(p.duration || '—')}</p>
+        <p class="mu"><b>Syllabus:</b> ${esc(p.syllabus || '—')}</p>
+        <p>${[...(p.skills || []), ...(p.weak || [])].map(s => `<span class="pill">${esc(s)}</span> `).join('')}</p>
+      </div>
+      <div class="card"><h3>My Badges</h3><div class="g3">${bg(0)}</div></div>
+      <button class="btn ghost" data-act="reset" style="color:#B91C1C;">Reset All Data</button>
+    `;
+  }
+};
+
+const NAV = [
+  ['dashboard', 'bi bi-house-door', 'Dashboard'],
+  ['study', 'bi bi-journal-check', 'Study Plan'],
+  ['progress', 'bi bi-graph-up-arrow', 'Progress'],
+  ['practice', 'bi bi-check2-square', 'Practice'],
+  ['profile', 'bi bi-person', 'Profile'],
+  ['settings', 'bi bi-gear', 'Settings']
+];
+
+const route = () => { const r = location.hash.slice(2); return NAV.some(n => n[0] === r) && !['profile', 'settings'].includes(r) ? r : 'dashboard'; };
+
+function render() {
+  if (!S.p) {
+    $('#app').innerHTML = '';
+    renderAssistant();
+    if (!$('#pt')) ask();
+    return;
+  }
+  const r = route();
+  $('#app').innerHTML = `
+    <aside class="sidebar">
+      <div class="brand">
+        <button class="brand-mark sidebar-toggle" type="button" aria-label="Expand navigation" aria-expanded="false" title="Expand or collapse navigation"><img src="GuruAgentLogo.jpg?v=202609252351" alt=""></button>
+        <div class="brand-copy"><strong class="lb">GuruAgent</strong><span class="lb">Chanakya-Marg</span></div>
+      </div>
+      <nav class="nav" aria-label="Primary navigation">
+        ${NAV.map(n => `<a class="nav-item ${r === n[0] ? 'active' : ''}" href="${n[0] === 'study' ? 'study.html' : n[0] === 'practice' ? 'practice.html' : n[0] === 'progress' ? 'progress.html' : n[0] === 'profile' ? 'profile.html' : n[0] === 'settings' ? 'profile.html#security' : '#/dashboard'}" title="${n[2]}"><i class="${n[1]} nav-icon"></i><span>${n[2]}</span></a>`).join('')}
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="agent-status"><span class="status-dot"></span><span>Agent Active</span></div>
+        <a class="mini-user" href="profile.html"><span class="avatar">P</span><span><strong>Profile</strong><small>Open account</small></span></a>
+      </div>
+    </aside>
+    <main class="mn domain-${domainKey()}">
+      <header class="hd">
+        <div class="top-title"><b style="font-size:18px">GuruAgent</b><small>PERSONAL LEARNING OS</small></div>
+        <div class="top-actions"><button class="btn amber" data-act="update">Update My Plan</button><span class="pill dark">🔥 ${S.streak.cur} Day Streak</span><button class="btn ghost" data-act="logout">Log out</button></div>
+      </header>
+      <div class="pg">${V[r]()}</div>
+    </main>
+  `;
+  renderAssistant();
+}
+
+function showPlanChoice() {
+  const name = S.p?.name ? `, ${esc(S.p.name)}` : '';
+  $('#modal').innerHTML = `<div class="ov"><section class="md plan-choice" role="dialog" aria-modal="true" aria-labelledby="plan-choice-title"><h2 id="plan-choice-title">Welcome back${name}</h2><p class="mu">Would you like to keep your current personalized plan or update it?</p><div class="plan-choice-actions"><button class="btn ghost" data-act="keep-plan" type="button">Keep my plan</button><button class="btn amber" data-act="update-plan" type="button">Update my plan</button></div></section></div>`;
+}
+
+async function logout() {
+  try {
+    const supabase = window.supabaseClient;
+    if (!supabase) throw new Error('The sign-out service is unavailable.');
+    const { error } = await supabase.auth.signOut();
+    if (error) throw error;
+    window.location.href = 'login.html';
+  } catch (error) {
+    console.error('Could not sign out.', error);
+    toast(`Could not log out. ${error.message || 'Please try again.'}`);
+  }
+}
+
+function enterPreview() {
+  S = fresh();
+  S.p = { name: '', preview: true };
+  save();
+  $('#modal').innerHTML = '';
+  location.hash = '#/dashboard';
+  render();
+}
+
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-go],[data-a],[data-act]');
+  if (!el) return;
+
+  if (el.dataset.a) {
+    const [i, j] = el.dataset.a.split(':').map(Number);
+    if (S.ans[i] == null) {
+      S.ans[i] = j;
+      log('Answered a question');
+      ev('ans');
+    }
+    return;
+  }
+  if (el.dataset.act) {
+    const a = el.dataset.act;
+    if (a === 'toggle') { S.ui.sb = S.ui.sb ? 0 : 1; save(); render(); }
+    else if (a === 'update') ask(1);
+    else if (a === 'keep-plan') { $('#modal').innerHTML = ''; }
+    else if (a === 'update-plan') ask(1);
+    else if (a === 'logout') logout();
+    else if (a === 'assistant-toggle') { assistantOpen = !assistantOpen; renderAssistant(); if (assistantOpen) $('#assistant-input')?.focus(); }
+    else if (a === 'assistant-close') { assistantOpen = false; renderAssistant(); }
+    else if (a === 'skip-setup') enterPreview();
+    else if (a === 'calculate') calculateProfit();
+    else if (a === 'chat-close') {
+      if (S.p) { $('#modal').innerHTML = ''; save(); }
+      else enterPreview();
+    }
+    else if (a === 'hide') { S.ui.hide = S.ui.hide ? 0 : 1; save(); render(); }
+    else if (a === 'close') { clearInterval(rt); $('#modal').innerHTML = ''; save(); }
+    else if (a === 'reset' && confirm('Reset all data and start over?')) { S = fresh(); save(); location.hash = '#/dashboard'; render(); }
+    return;
+  }
+  if (e.target.closest('a')) return;
+  const g = el.dataset.go;
+  if (g.startsWith('res:')) reader(g.slice(4));
+  else location.hash = g;
+});
+
+addEventListener('hashchange', () => { render(); scrollTo(0, 0); });
+initializeDashboard();
+
+async function initializeDashboard() {
+  const shouldOpenPlanPrompt = new URLSearchParams(window.location.search).get('openPlan') === '1';
+  const supabase = window.supabaseClient;
+  if (!supabase) {
+    startDashboardPreview('Preview mode: sign in to save your dashboard.');
+    return;
+  }
+
+  let session;
+  try {
+    const { data, error } = await supabase.auth.getSession();
+    session = data?.session;
+    if (error) {
+      throw error;
+    }
+    if (!session?.user?.id) {
+      startDashboardPreview('Preview mode: sign in to save your dashboard.');
+      return;
+    }
+    if (shouldOpenPlanPrompt) {
+      window.history.replaceState(null, '', `${window.location.pathname}${window.location.hash}`);
+    }
+  } catch (error) {
+    console.error('Could not verify the signed-in user.', error);
+    window.location.href = 'login.html';
+    return;
+  }
+
+  K = `${LEGACY_K}:${session.user.id}`;
+  try {
+    const saved = localStorage.getItem(K);
+    if (saved) {
+      S = JSON.parse(saved) || fresh();
+    } else {
+      const legacy = localStorage.getItem(LEGACY_K);
+      const legacyState = legacy ? JSON.parse(legacy) : null;
+      S = legacyState?.p && !legacyState.p.preview ? legacyState : fresh();
+      if (legacy) localStorage.removeItem(LEGACY_K);
+      if (S.p) save();
+    }
+  } catch (error) {
+    console.warn('Could not load the saved dashboard state.', error);
+    S = fresh();
+    localStorage.removeItem(K);
+  }
+
+  if (S.p?.preview) {
+    S = fresh();
+    localStorage.removeItem(K);
+  }
+  const sharedPlan = window.GuruLearning
+    ? await window.GuruLearning.loadPlan()
+    : null;
+  if (!S.p && sharedPlan?.profile) {
+    const learner = sharedPlan.profile;
+    const profileData = {
+      name: learner.name || session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Learner',
+      education: learner.education || 'College',
+      stream: learner.stream || sharedPlan.subject,
+      year: learner.year || '',
+      syllabus: learner.syllabus || sharedPlan.subject,
+      goal: learner.goal || sharedPlan.goal,
+      weak: Array.isArray(learner.weak) ? learner.weak.join(', ') : learner.weak || '',
+      daily: learner.daily || `${sharedPlan.dailyMinutes} minutes`,
+      duration: learner.duration || `${sharedPlan.daysUntilExam} days`,
+      level: learner.level || 'Beginner'
+    };
+    const generated = local(profileData);
+    delete generated.studyPlan;
+    apply(generated, sharedPlan.goal, false);
+    S.studyPlan = sharedPlan;
+    save();
+  } else if (S.p && sharedPlan) {
+    S.studyPlan = sharedPlan;
+  }
+  if (sharedPlan) syncPlanTasks(sharedPlan);
+  if (!S.chat || !Array.isArray(S.chat.messages)) S.chat = { messages: [] };
+  S.chat.messages = S.chat.messages.filter(message => message && ['user', 'assistant'].includes(message.role) && typeof message.content === 'string').slice(-24);
+  if (S.p) {
+    if (S.streak.last && Date.now() - S.streak.last > 864e5) {
+      S.streak.cur = 0;
+      S.streak.day = '';
+    }
+    S.streak.last = Date.now();
+    save();
+  }
+  render();
+  if (shouldOpenPlanPrompt && S.p) ask(1);
+}
+
+function startDashboardPreview(message) {
+  K = null;
+  S = fresh();
+  render();
+  toast(message);
+}
+</script>
+<script src="sidebar-profile.js"></script>
+</body>
+</html>
