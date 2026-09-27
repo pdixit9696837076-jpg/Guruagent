@@ -37,6 +37,18 @@ function isQuotaError(message) {
   return /rate.?limit|quota|daily.*limit|free tier/i.test(message);
 }
 
+function isAllowedOrigin(origin) {
+  if (!origin) return false;
+  if (origin === 'null') return true;
+  if (/^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/.test(origin)) return true;
+  if (/^https:\/\/[a-z0-9-]+\.github\.io$/i.test(origin)) return true;
+  const configuredOrigins = (process.env.ALLOWED_ORIGINS || '')
+    .split(',')
+    .map(value => value.trim())
+    .filter(Boolean);
+  return configuredOrigins.includes(origin);
+}
+
 async function generateReply(apiKey, requestBody) {
   const errors = [];
   for (const model of [...new Set([MODEL, ...FALLBACK_MODELS])]) {
@@ -73,7 +85,7 @@ async function generateReply(apiKey, requestBody) {
 
 async function handler(req, res) {
   const origin = req.headers?.origin;
-  if (origin === 'null' || /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/.test(origin || '')) {
+  if (isAllowedOrigin(origin)) {
     res.setHeader('Access-Control-Allow-Origin', origin);
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');

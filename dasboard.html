@@ -461,6 +461,72 @@ textarea:focus { outline: none; border-color: var(--ac); box-shadow: 0 0 0 3px r
 <link rel="stylesheet" href="study-ui.css">
 <link rel="stylesheet" href="guru-theme.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+@media (max-width: 640px) {
+  #app { display: block; min-height: 100dvh; padding-bottom: calc(64px + env(safe-area-inset-bottom)); }
+  .sidebar {
+    position: fixed;
+    inset: auto 0 0;
+    z-index: 30;
+    width: 100%;
+    height: calc(64px + env(safe-area-inset-bottom));
+    padding: 5px 6px env(safe-area-inset-bottom);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    border-top: 1px solid var(--study-border);
+    border-right: 0;
+    background: #fbfaf7;
+    box-shadow: 0 -8px 24px rgba(17, 23, 46, .08);
+  }
+  .sidebar .brand, .sidebar .sidebar-bottom { display: none; }
+  .sidebar nav { width: 100%; flex-direction: row; justify-content: space-around; gap: 2px; }
+  .sidebar nav a.nav-item {
+    min-width: 0;
+    min-height: 50px;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    gap: 3px;
+    padding: 5px 2px;
+    overflow: visible;
+    border-radius: 9px;
+  }
+  .sidebar .nav-item > span:not(.nav-icon) {
+    width: auto;
+    opacity: 1;
+    visibility: visible;
+    overflow: visible;
+    font-size: 9px;
+    line-height: 1.1;
+    text-align: center;
+  }
+  .sidebar .nav-icon { font-size: 15px; }
+  .mn { width: 100%; min-width: 0; margin: 0; }
+  .hd { position: sticky; top: 0; z-index: 20; padding: 10px 12px; gap: 8px; }
+  .top-title { min-width: 0; }
+  .top-title b { font-size: 16px !important; }
+  .top-actions { gap: 6px; }
+  .top-actions .pill { display: none; }
+  .top-actions .btn { padding: 8px 10px; font-size: 12px; }
+  .pg { padding: 14px 12px 24px; }
+  .hero { align-items: flex-start; flex-direction: column; padding: 18px; }
+  .hero h1 { font-size: clamp(22px, 7vw, 30px); }
+  .metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .metric { min-width: 0; padding: 12px; }
+  .metric strong { font-size: 20px; }
+  .card { padding: 16px; border-radius: 16px; }
+  .g2, .domain-tools { grid-template-columns: 1fr; }
+}
+@media (max-width: 360px) {
+  .sidebar { padding-inline: 3px; }
+  .sidebar .nav-item > span:not(.nav-icon) { font-size: 8px; }
+  .top-title b { font-size: 14px !important; }
+  .top-actions .btn { padding: 7px 8px; font-size: 11px; }
+  .metric-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
 </head>
 <body>
 <div id="app"></div>
@@ -473,6 +539,7 @@ textarea:focus { outline: none; border-color: var(--ac); box-shadow: 0 0 0 3px r
 <script>
 const $ = s => document.querySelector(s);
 const LEGACY_K = 'guruagent_v5';
+const AI_CHAT_URL = window.GURUAGENT_API_URL || 'https://guruagent-fixed.vercel.app/api/chat';
 let K = null;
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -763,7 +830,7 @@ function apply(o, text, upd) {
   ['name','education','stream','year','syllabus','goal','prompt','level','daily','duration','language'].forEach(k => { if (o[k]) p[k] = o[k]; });
   ['skills','weak'].forEach(k => {
     if (!Array.isArray(o[k])) return;
-    p[k] = upd ? [...new Set(o[k])] : [...new Set([...(p[k] || []), ...o[k]])];
+    p[k] = [...new Set(o[k])];
   });
   const ids = o.resources.map(r => {
     const id = 'r' + (++S.n);
@@ -887,35 +954,52 @@ function parseGeneratedDashboard(reply, input) {
 }
 
 async function requestGuruAgent(messages) {
-  const isLocalPreview = location.protocol === 'file:' || ['localhost', '127.0.0.1', '::1'].includes(location.hostname);
-  const response = await fetch(isLocalPreview ? 'https://guruagent-fixed.vercel.app/api/chat' : '/api/chat', {
+  const response = await fetch(AI_CHAT_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ messages })
   });
   const payload = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(payload.error || `AI service returned HTTP ${response.status}`);
+  if (!response.ok) {
+    const message = payload.error || (
+      response.status === 404
+        ? 'The AI chat endpoint was not found. Deploy the api/chat.js function and verify the configured AI service URL.'
+        : `AI service returned HTTP ${response.status}`
+    );
+    throw new Error(message);
+  }
   if (typeof payload.reply !== 'string' || !payload.reply.trim()) throw new Error('AI service returned an empty response.');
   return payload.reply.trim();
 }
 
-async function generateDashboard(input) {
+async function generateDashboard(input, update = false) {
   const system = [
-    'You are GuruAgent, a personal learning assistant that creates dashboard data from a learner profile.',
+    'You are GuruAgent, the same personal learning assistant used by the GuruAgent chat widget. Create or adapt a learner dashboard using the supplied learner profile and dashboard context.',
     'Return only one valid JSON object. Do not include Markdown, HTML, commentary, or code fences.',
     'Personalize every task, resource, and practice question for the learner’s stream, syllabus, goal, level, weak topics, available study time, and deadline. Give each practice question a topic matching one of the learner’s syllabus or weak topics.',
     'Write all generated dashboard content in English by default. If the learner’s goal is written in Hindi or Hinglish, write all generated explanations, resources, tasks, and practice questions in Hindi. The subject name alone does not determine the response language.',
-    'Never invent learner details. Use the supplied profile when returning profile fields.',
-    'Keep the existing dashboard UI unchanged: return content/data only, never UI markup or styles.',
+    'Never invent learner details. For an update request, follow changeRequest and adapt the dashboard content while preserving profile fields not explicitly changed by the learner.',
+    'Keep the dashboard UI unchanged: return content/data only, never UI markup or styles.',
     'Use this exact JSON shape: {"name":"string","education":"string","stream":"string","year":"string","syllabus":"string","goal":"string","level":"string","daily":"string","duration":"string","skills":["string"],"weak":["string"],"resources":[{"title":"string","desc":"string","tag":"string","notes":["string"]}],"tasks":[{"title":"string","type":"read or quiz","res":0,"target":3}],"questions":[{"q":"string","opts":["string","string"],"a":0,"topic":"string"}]}',
     'Create 3 to 8 useful resources, 5 to 12 actionable tasks, and at least 3 multiple-choice questions with exactly one correct answer. For read tasks, res must be a zero-based index into resources. For quiz tasks use type "quiz" and a target count.',
     'Learner profile JSON: ' + JSON.stringify(input)
   ].join('\n');
   const reply = await requestGuruAgent([
     { role: 'system', content: system },
-    { role: 'user', content: 'Create my personalized learning dashboard using the profile above.' }
+    { role: 'user', content: update ? input.changeRequest : 'Create my personalized learning dashboard using the profile above.' }
   ]);
-  return parseGeneratedDashboard(reply, input);
+  const dashboard = parseGeneratedDashboard(reply, input);
+  if (window.GuruLearning) {
+    dashboard.studyPlan = window.GuruLearning.buildPlan({
+      ...dashboard,
+      subject: dashboard.stream,
+      weak: dashboard.weak.join(', '),
+      daily: dashboard.daily,
+      duration: dashboard.duration
+    });
+    dashboard.studyPlan.prompt = input.changeRequest || input.prompt || dashboard.goal;
+  }
+  return dashboard;
 }
 
 function syncPlanTasks(plan) {
@@ -1005,6 +1089,16 @@ function formatChatReply(raw) {
   return html || '<p>No response received.</p>';
 }
 
+function isDashboardChangeRequest(message) {
+  return /(?:\b(?:create|build|make|generate|set(?:\s+up)?|prepare|update|refresh|change|modify|customi[sz]e|redesign|rebuild)\b.{0,100}\b(?:dashboard|study\s+plan|plan|schedule|tasks?)\b|\b(?:dashboard|study\s+plan|plan|schedule)\b.{0,100}\b(?:create|build|make|generate|set|prepare|update|refresh|change|modify|customi[sz]e|redesign|rebuild)\b|(?:dashboard|study\s+plan|plan|schedule).{0,100}(?:bana|bna|banao|bnao|set|taiyar|update|badal|change)|(?:bana|bna|banao|bnao|set|taiyar|update|badal).{0,100}(?:dashboard|study\s+plan|plan|schedule))/i.test(message);
+}
+
+function isPlanBuildConfirmation(message, conversation) {
+  if (!/^(?:yes|yeah|yep|sure|okay|ok|please|go ahead|do it|haan|han|haanji|ji|theek hai|kar do|bana do|bna do)[.! ]*$/i.test(message.trim())) return false;
+  const previousReply = [...conversation].reverse().find(item => item.role === 'assistant')?.content || '';
+  return /(?:create|build|make|set up|prepare|bana|bna).{0,80}(?:dashboard|study plan|plan)|(?:dashboard|study plan|plan).{0,80}(?:create|build|make|set up|prepare|bana|bna)/i.test(previousReply);
+}
+
 function renderAssistant() {
   const root = $('#assistant-root');
   if (!root || !S.p) { if (root) root.innerHTML = ''; return; }
@@ -1030,11 +1124,39 @@ function renderAssistant() {
     save();
     renderAssistant();
     try {
+      if (isDashboardChangeRequest(text)) {
+        const requestedProfile = parsePlanPrompt(text);
+        const profile = {
+          ...S.p,
+          stream: requestedProfile.stream === 'General Studies' ? S.p.stream : requestedProfile.stream,
+          syllabus: requestedProfile.syllabus || S.p.syllabus,
+          changeRequest: text,
+          currentDashboard: {
+            tasks: S.tasks.map(task => ({ title: task.title, type: task.type, done: Boolean(task.done) })),
+            resources: S.res.map(resource => resource.title),
+            questions: S.qs.slice(0, 20).map(question => question.q)
+          }
+        };
+        const generated = await generateDashboard(profile, true);
+        apply(generated, text, true);
+        const isHindi = window.GuruLearning?.inferLanguage(text) === 'hi';
+        S.chat.messages.push({
+          role: 'assistant',
+          content: isHindi
+            ? 'Aapki request ke hisaab se dashboard, study tasks, resources aur practice questions update kar diye hain.'
+            : 'I updated your dashboard, study tasks, resources, and practice questions to match your request.'
+        });
+        chk();
+        save();
+        render();
+        return;
+      }
       const profile = chatContext();
       const system = [
-        'You are GuruAgent, a capable general-purpose AI tutor and personal learning assistant.',
+        'You are GuruAgent, a capable general-purpose AI tutor, personal learning assistant, and dashboard manager.',
         'Answer directly and helpfully in English by default. Reply in Hindi only when the latest user message is written in Hindi or Hinglish. The subject name alone does not determine the response language. Explain concepts, solve educational questions step by step, and give correct runnable code when relevant.',
         'Use the learner profile and progress below to personalize answers and accurately answer questions about their dashboard. Never invent profile or progress details. If a detail is unavailable, say so clearly.',
+        'When the learner asks for a dashboard change, explain that you can apply changes to their study tasks, resources, and practice questions through the dashboard update request.',
         'Remember the recent conversation and resolve follow-ups from context. Do not claim to browse the web, see images, or access files.',
         'Use clear Markdown and keep simple answers concise.',
         'Reply language: ' + ((window.GuruLearning?.inferLanguage(S.chat.messages.filter(message => message.role === 'user').slice(-1)[0]?.content || '') || 'en') === 'hi' ? 'Hindi' : 'English'),
@@ -1105,47 +1227,93 @@ function parsePlanPrompt(prompt) {
 }
 
 function ask(upd) {
-  const data = {
-    ...(S.p || {})
+  const conversation = [{
+    role: 'assistant',
+    content: upd
+      ? 'Hi! Tell me what you would like to change in your current study plan. We can discuss your goals first; I will update the dashboard only when you ask me to.'
+      : 'Hi! I’m GuruAgent. Tell me about your studies or ask me anything. When you’re ready, share your subject, topics, exam date, daily study time, and weak areas, then ask me to create your dashboard.'
+  }];
+  const renderConversation = () => {
+    const body = $('#chat-body');
+    if (!body) return;
+    body.innerHTML = `<div class="chat-welcome"><h2>${upd ? 'Update your study plan' : 'Let’s plan your learning'}</h2><p>Chat with GuruAgent first. Your dashboard changes only when you ask for them.</p></div>${conversation.map(message => `<div class="chat-msg ${message.role === 'user' ? 'user' : 'ai'}"><div class="chat-bubble">${esc(message.content)}</div></div>`).join('')}`;
+    body.scrollTop = body.scrollHeight;
   };
-  const messages = [];
-  const addMessage = (who, text) => messages.push(`<div class="chat-msg ${who}"><div class="chat-bubble">${esc(text)}</div></div>`);
-  addMessage('ai', upd
-    ? 'Enter your new study goal in one message. Your dashboard, study plan, practice, and progress will update immediately.'
-    : 'Enter your subject, exam date, weak topics, and daily study time in one message. For example: My Hindi exam is the day after tomorrow, and I can study for 2 hours daily.');
   $('#modal').innerHTML = `<div class="ov"><div class="md chat-md">
     <div class="chat-head"><img class="chat-avatar" src="GuruAgentLogo.jpg?v=202609252351" alt=""><div><strong>GuruAgent</strong><small>Personal learning assistant</small></div><button class="chat-close" data-act="chat-close" aria-label="Close">×</button></div>
-    <div class="chat-body" id="chat-body"><div class="chat-welcome"><h2>${upd ? 'Update your study plan' : 'Tell me your exam goal'}</h2><p>One prompt is enough. No extra questions or AI wait.</p></div>${messages.join('')}</div>
+    <div class="chat-body" id="chat-body"></div>
     <div class="chat-status" id="chat-status"></div>
-    <form class="chat-input-wrap" id="chat-form"><textarea class="chat-input" id="chat-input" rows="2" maxlength="2000" placeholder="My Hindi exam is the day after tomorrow, and I can study for 2 hours daily..." aria-label="Your study goal"></textarea><button class="chat-icon chat-send" type="submit" title="Create dashboard" aria-label="Create dashboard">➤</button></form>
+    <form class="chat-input-wrap" id="chat-form"><textarea class="chat-input" id="chat-input" rows="2" maxlength="4000" placeholder="Say hello, discuss your study plan, or ask for a dashboard..." aria-label="Message GuruAgent"></textarea><button class="chat-icon chat-send" type="submit" title="Send message" aria-label="Send message">➤</button></form>
   </div></div>`;
-  const body = $('#chat-body');
+  renderConversation();
   const input = $('#chat-input');
-  $('#chat-form').onsubmit = e => {
+  $('#chat-form').onsubmit = async e => {
     e.preventDefault();
     const text = input.value.trim();
     if (!text) return;
-    addMessage('user', text);
+    conversation.push({ role: 'user', content: text });
+    renderConversation();
+    input.value = '';
     input.disabled = true;
     const submit = $('#chat-form button[type="submit"]');
     if (submit) submit.disabled = true;
-    $('#chat-status').textContent = 'Creating your dashboard…';
+    const status = $('#chat-status');
+    const shouldBuildDashboard = isDashboardChangeRequest(text) || isPlanBuildConfirmation(text, conversation.slice(0, -1));
+    if (status) status.textContent = shouldBuildDashboard ? 'GuruAgent is preparing your dashboard…' : 'GuruAgent is thinking…';
     try {
-      const profile = parsePlanPrompt(text);
-      const generated = local(profile);
-      apply(generated, text, upd);
-      S.streak.last = Date.now();
-      $('#modal').innerHTML = '';
-      location.hash = '#/dashboard';
-      chk();
-      save();
-      render();
+      if (shouldBuildDashboard) {
+        const planDetails = conversation.filter(message => message.role === 'user').map(message => message.content).join('\n');
+        const requestedProfile = parsePlanPrompt(planDetails);
+        const profile = upd && S.p ? {
+          ...S.p,
+          name: S.p.name || requestedProfile.name,
+          goal: requestedProfile.goal || S.p.goal,
+          stream: requestedProfile.stream === 'General Studies' ? S.p.stream : requestedProfile.stream,
+          syllabus: requestedProfile.syllabus || S.p.syllabus,
+          weak: requestedProfile.weak || S.p.weak,
+          daily: window.GuruLearning?.inferGoal(planDetails)?.hasDailyTime ? requestedProfile.daily : S.p.daily,
+          duration: window.GuruLearning?.inferGoal(planDetails)?.hasDuration ? requestedProfile.duration : S.p.duration,
+          changeRequest: planDetails
+        } : { ...requestedProfile, changeRequest: planDetails };
+        const generated = await generateDashboard(profile, Boolean(upd));
+        apply(generated, planDetails, upd);
+        S.streak.last = Date.now();
+        $('#modal').innerHTML = '';
+        location.hash = '#/dashboard';
+        chk();
+        save();
+        render();
+        return;
+      }
+
+      const learnerContext = upd ? `Current learner profile and dashboard: ${JSON.stringify(chatContext())}` : 'This is a new learner setting up their dashboard.';
+      const reply = await requestGuruAgent([
+        {
+          role: 'system',
+          content: [
+            'You are GuruAgent, a warm, capable personal learning assistant. Have a natural conversation and respond to greetings normally.',
+            'Do not create, update, or return dashboard JSON unless the learner explicitly asks to create, set up, or change their dashboard or study plan.',
+            'Help the learner describe their study plan. Ask a brief follow-up when useful about their subject, topics, exam/deadline, daily study time, level, or weak areas. Do not force the learner to provide every detail at once.',
+            'When the learner shares plan details without asking to create a dashboard, acknowledge them and ask what they want to do next or whether they are ready to create it.',
+            'Reply in Hindi or Hinglish when the learner writes in Hindi or Hinglish; otherwise reply in English. Keep the response friendly and concise.',
+            learnerContext
+          ].join('\n')
+        },
+        ...conversation.slice(-18)
+      ]);
+      conversation.push({ role: 'assistant', content: reply });
+      if (status) status.textContent = '';
+      renderConversation();
     } catch (error) {
-      console.error('Could not build the study plan from the prompt.', error);
-      $('#chat-status').textContent = `Could not create the dashboard. ${error.message || 'Please try another prompt.'}`;
+      console.error('GuruAgent plan conversation failed.', error);
+      const message = String(error?.message || 'AI service is temporarily unavailable.');
+      conversation.push({ role: 'assistant', content: `I could not reach the AI service. ${message}` });
+      if (status) status.textContent = '';
+      renderConversation();
+    } finally {
       input.disabled = false;
       if (submit) submit.disabled = false;
-      input.focus();
+      if (input.isConnected) input.focus();
     }
   };
   input.onkeydown = e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); $('#chat-form').requestSubmit(); } };
@@ -1207,14 +1375,11 @@ const V = {
     const d = domainInfo();
     const practiceHistory = window.GuruLearning?.getHistory() || [];
     const practiceSummary = window.GuruLearning?.summarizeHistory(practiceHistory) || { questions: 0, accuracy: 0, sessions: 0 };
-    const examTime = S.studyPlan ? `${S.studyPlan.daysUntilExam} day${S.studyPlan.daysUntilExam === 1 ? '' : 's'}` : S.p.duration || '7 days';
-    const studyTime = S.studyPlan ? `${S.studyPlan.dailyMinutes} minutes` : S.p.daily || '60 minutes';
     return `
       <section class="hero">
         <div><p class="lbl" style="color:#FCD34D; margin:0 0 6px;">${d.icon} ${d.label}</p><h1>${d.title}</h1><p>Good ${g}${n ? ', ' + esc(n) : ''}. ${d.sub}</p></div>
         <button class="btn" data-act="update">Refresh my plan</button>
       </section>
-      <div class="card"><span class="lbl">YOUR STUDY GOAL</span><h2 style="margin:8px 0">${esc(S.p.goal || 'Create a personalized study goal')}</h2><p class="mu" style="margin:0">${esc(S.studyPlan?.subject || S.p.stream || 'Your subject')} · ${esc(examTime)} · ${esc(studyTime)} daily</p></div>
       ${domainTools()}
       <div class="metric-grid">
         <div class="metric"><span>Tasks left</span><strong>${Math.max(0, S.tasks.length - done())}</strong></div>
@@ -1347,7 +1512,7 @@ function render() {
     <main class="mn domain-${domainKey()}">
       <header class="hd">
         <div class="top-title"><b style="font-size:18px">GuruAgent</b><small>PERSONAL LEARNING OS</small></div>
-        <div class="top-actions"><button class="btn amber" data-act="update">Update My Plan</button><span class="pill dark">🔥 ${S.streak.cur} Day Streak</span><button class="btn ghost" data-act="logout">Log out</button></div>
+        <div class="top-actions"><button class="btn amber" data-act="update">Update My Plan</button><span class="pill dark">🔥 ${S.streak.cur} Day Streak</span></div>
       </header>
       <div class="pg">${V[r]()}</div>
     </main>
