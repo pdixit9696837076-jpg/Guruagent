@@ -1201,3 +1201,127 @@ body:has(#app) {
         padding: 8px 9px;
     }
 }
+
+@media (max-width: 800px) {
+    .study-page,
+    .progress-page {
+        padding-bottom: calc(84px + env(safe-area-inset-bottom));
+    }
+
+    .study-page .sidebar,
+    .study-page .sidebar:hover,
+    .study-page .sidebar:focus-within,
+    .study-page .sidebar.is-expanded,
+    .study-page .sidebar.open,
+    .progress-page .sidebar,
+    .progress-page .sidebar:hover,
+    .progress-page .sidebar:focus-within,
+    .progress-page .sidebar.is-expanded,
+    .progress-page .sidebar.open {
+        position: fixed;
+        inset: auto 0 0;
+        z-index: 200;
+        width: 100%;
+        height: calc(64px + env(safe-area-inset-bottom));
+        min-height: 0;
+        padding: 4px 6px env(safe-area-inset-bottom);
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        overflow: visible;
+        transform: none;
+        border-top: 1px solid var(--study-border);
+        border-right: 0;
+        background: rgba(249, 248, 244, .98);
+        box-shadow: 0 -8px 24px rgba(17, 23, 46, .08);
+        backdrop-filter: blur(18px);
+    }
+
+    .study-page .sidebar .brand,
+    .study-page .sidebar .sidebar-bottom,
+    .progress-page .sidebar .brand,
+    .progress-page .sidebar .sidebar-bottom,
+    .study-page .mobile-menu,
+    .study-page .mobile-overlay {
+        display: none;
+    }
+
+    .study-page .sidebar nav,
+    .progress-page .sidebar nav {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        align-items: stretch;
+        justify-content: space-between;
+        gap: 2px;
+        overflow: visible;
+    }
+
+    .study-page .sidebar nav .nav-item,
+    .progress-page .sidebar nav .nav-item {
+        width: auto;
+        min-width: 0;
+        min-height: 50px;
+        flex: 1 1 0;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+        padding: 4px 1px;
+        overflow: visible;
+        border-radius: 9px;
+        text-align: center;
+    }
+
+    .study-page .sidebar .nav-icon,
+    .progress-page .sidebar .nav-icon {
+        width: auto;
+        flex: 0 0 auto;
+        font-size: 15px;
+        line-height: 1;
+    }
+
+    .study-page .sidebar .nav-item > span:not(.nav-icon),
+    .progress-page .sidebar .nav-item > span:not(.nav-icon) {
+        width: auto;
+        max-width: 100%;
+        opacity: 1;
+        overflow: visible;
+        visibility: visible;
+        font-size: 9px;
+        line-height: 1.1;
+        text-align: center;
+        white-space: normal;
+    }
+
+    .study-page .main,
+    .progress-page .main {
+        margin-left: 0;
+    }
+
+    .study-page .main {
+        padding-bottom: 35px;
+    }
+
+    .progress-page .main {
+        padding-bottom: calc(96px + env(safe-area-inset-bottom));
+    }
+
+    .study-page .quick-actions {
+        left: 0;
+        bottom: calc(64px + env(safe-area-inset-bottom));
+        z-index: 170;
+    }
+
+    .study-page {
+        padding-bottom: calc(160px + env(safe-area-inset-bottom));
+    }
+}
+
+@media (max-width: 370px) {
+    .study-page .sidebar .nav-item > span:not(.nav-icon),
+    .progress-page .sidebar .nav-item > span:not(.nav-icon) {
+        font-size: 8px;
+    }
+}
